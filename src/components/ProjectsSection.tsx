@@ -1,8 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Cpu, Brain, Microscope, ExternalLink } from "lucide-react";
 import misCapacitorImage from "@/assets/mis-capacitor.png";
+import mosEquipmentImage from "@/assets/mos-equipment.png";
+import mosCleanroomImage from "@/assets/mos-cleanroom.png";
+import mosProcessingImage from "@/assets/mos-processing.png";
 
 const ProjectsSection = () => {
   const projects = [
@@ -16,7 +20,7 @@ const ProjectsSection = () => {
       ],
       technologies: ["PECVD", "PVD", "Photolithography", "Wet Etching", "Dry Etching", "C-V Analysis", "I-V Characterization"],
       icon: Microscope,
-      image: misCapacitorImage,
+      images: [misCapacitorImage, mosEquipmentImage, mosCleanroomImage, mosProcessingImage],
       featured: true
     },
     {
@@ -29,7 +33,7 @@ const ProjectsSection = () => {
       ],
       technologies: ["TensorFlow", "Keras", "Scikit-learn", "OpenCV", "CNN", "Computer Vision", "Data Preprocessing"],
       icon: Brain,
-      image: null,
+      images: null,
       featured: true
     },
     {
@@ -42,7 +46,7 @@ const ProjectsSection = () => {
       ],
       technologies: ["Electrochemical Etching", "STM", "3D Printing", "CAD Design", "Process Control", "Nanoscale Imaging"],
       icon: Cpu,
-      image: null,
+      images: null,
       featured: false
     }
   ];
@@ -66,14 +70,24 @@ const ProjectsSection = () => {
               className="group hover:shadow-glow-accent transition-all duration-500 border-border/50 hover:border-accent/30 bg-card/80 backdrop-blur-sm overflow-hidden"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
-              {project.image && (
+              {project.images && (
                 <div className="relative overflow-hidden">
-                  <img 
-                    src={project.image} 
-                    alt={project.title}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {project.images.map((image, imageIndex) => (
+                        <CarouselItem key={imageIndex}>
+                          <img 
+                            src={image} 
+                            alt={`${project.title} - Image ${imageIndex + 1}`}
+                            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="absolute left-2 top-1/2" />
+                    <CarouselNext className="absolute right-2 top-1/2" />
+                  </Carousel>
+                  <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent pointer-events-none" />
                   <div className="absolute top-4 left-4">
                     <div className="p-2 bg-accent/20 backdrop-blur-sm rounded-lg">
                       <project.icon className="h-6 w-6 text-accent" />
@@ -92,7 +106,7 @@ const ProjectsSection = () => {
                       {project.description}
                     </CardDescription>
                   </div>
-                  {!project.image && (
+                  {!project.images && (
                     <div className="p-2 bg-accent/20 rounded-lg">
                       <project.icon className="h-6 w-6 text-accent" />
                     </div>
