@@ -12,13 +12,6 @@ const ContactSection = () => {
       primary: true
     },
     {
-      icon: Phone,
-      label: "Phone",
-      value: "289-939-8055",
-      href: "tel:289-939-8055",
-      primary: false
-    },
-    {
       icon: Linkedin,
       label: "LinkedIn",
       value: "linkedin.com/in/jenitona",

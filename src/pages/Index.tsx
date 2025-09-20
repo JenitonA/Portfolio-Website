@@ -21,11 +21,7 @@ const Index = () => {
       <footer className="bg-secondary/20 border-t border-border/50 py-8">
         <div className="container mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <span>© 2024 Jeniton Augustinpillai</span>
-            <span>•</span>
-            <span>Nanotechnology Engineering</span>
-            <span>•</span>
-            <span>University of Waterloo</span>
+            <span>© 2025 Jeniton Augustinpillai</span>
           </div>
           <p className="text-sm text-muted-foreground/70 mt-2">
             Passionate about advancing semiconductor technology
