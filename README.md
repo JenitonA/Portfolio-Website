@@ -1,73 +1,94 @@
-# Welcome to your Lovable project
+# Jeniton Augustinpillai - Portfolio Website
 
-## Project info
+A modern, responsive portfolio website showcasing my work in nanotechnology engineering, semiconductor research, and software development.
 
-**URL**: https://lovable.dev/projects/a66ab54c-4f1a-48f6-b098-a554fda820cb
+## 🚀 Live Demo
 
-## How can I edit this code?
+Visit the live portfolio: [Your Portfolio URL]
 
-There are several ways of editing your application.
+## 👨‍💻 About
 
-**Use Lovable**
+This portfolio showcases my journey as a Nanotechnology Engineering student at the University of Waterloo, featuring:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a66ab54c-4f1a-48f6-b098-a554fda820cb) and start prompting.
+- **Semiconductor Research Projects**: MOS capacitor fabrication, wafer defect detection AI, STM tip etching
+- **Software Development**: AI-powered Chrome extensions, robotics challenges, game development
+- **Technical Skills**: Microfabrication, machine learning, full-stack development
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Technologies Used
 
-**Use your preferred IDE**
+- **Frontend**: React, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **Animations**: Custom CSS animations and transitions
+- **Deployment**: [Your deployment platform]
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📂 Project Structure
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```
+src/
+├── components/          # Reusable UI components
+│   ├── HeroSection.tsx     # Landing section with profile
+│   ├── ProjectsSection.tsx # Featured and additional projects
+│   ├── ExperienceSection.tsx # Work experience
+│   ├── SkillsSection.tsx   # Technical skills
+│   └── ContactSection.tsx  # Contact information
+├── assets/             # Images and static files
+├── lib/               # Utility functions
+└── pages/             # Main page components
+```
 
-Follow these steps:
+## 🚀 Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- Node.js (v18 or higher)
+- npm or yarn
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Installation
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+1. Clone the repository:
+```bash
+git clone https://github.com/JenitonA/Portfolio-Website.git
+```
+
+2. Navigate to the project directory:
+```bash
+cd Portfolio-Website
+```
+
+3. Install dependencies:
+```bash
+npm install
+```
+
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+5. Open your browser and visit `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📱 Features
 
-**Use GitHub Codespaces**
+- **Responsive Design**: Optimized for all device sizes
+- **Modern UI**: Clean, professional design with smooth animations
+- **Project Showcase**: Detailed project cards with image carousels
+- **Interactive Elements**: Hover effects and smooth scrolling
+- **Contact Integration**: Direct links to email, LinkedIn, and GitHub
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🎨 Customization
 
-## What technologies are used for this project?
+The portfolio is built with modularity in mind. Key customization points:
 
-This project is built with:
+- **Colors**: Modify the color scheme in `tailwind.config.ts`
+- **Content**: Update project data in `ProjectsSection.tsx`
+- **Styling**: Customize animations and effects in `src/index.css`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📧 Contact
 
-## How can I deploy this project?
+- **Email**: j4august@uwaterloo.ca
+- **LinkedIn**: [linkedin.com/in/jenitona](https://linkedin.com/in/jenitona)
+- **GitHub**: [github.com/JenitonA](https://github.com/JenitonA)
 
-Simply open [Lovable](https://lovable.dev/projects/a66ab54c-4f1a-48f6-b098-a554fda820cb) and click on Share -> Publish.
+## 📄 License
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is open source and available under the [MIT License](LICENSE).
