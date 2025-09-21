@@ -93,7 +93,7 @@ const ProjectsSection = () => {
       technologies: ["Python", "OpenCV", "Ubuntu", "LiDAR", "Computer Vision", "Robotics"],
       icon: Cpu,
       featured: false,
-      githubUrl: "https://github.com/JenitonA/toyota-agv-challenge"
+      githubUrl: "https://github.com/JenitonA/toyota-innovation-challenge"
     },
     {
       title: "AntiZone - Survival Shooter Game",
