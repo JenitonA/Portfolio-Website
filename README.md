@@ -4,7 +4,7 @@ A modern, responsive portfolio website showcasing my work in nanotechnology engi
 
 ## 🚀 Live Demo
 
-Visit the live portfolio: [Your Portfolio URL]
+Visit the live portfolio: [https://jeniton.vercel.app/](https://jeniton.vercel.app/) (I dont have a domain yet 😔)
 
 ## 👨‍💻 About
 
@@ -82,13 +82,3 @@ The portfolio is built with modularity in mind. Key customization points:
 - **Colors**: Modify the color scheme in `tailwind.config.ts`
 - **Content**: Update project data in `ProjectsSection.tsx`
 - **Styling**: Customize animations and effects in `src/index.css`
-
-## 📧 Contact
-
-- **Email**: j4august@uwaterloo.ca
-- **LinkedIn**: [linkedin.com/in/jenitona](https://linkedin.com/in/jenitona)
-- **GitHub**: [github.com/JenitonA](https://github.com/JenitonA)
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
