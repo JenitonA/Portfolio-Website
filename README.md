@@ -4,7 +4,7 @@ A modern, responsive portfolio website showcasing my work in nanotechnology engi
 
 ## 🚀 Live Demo
 
-Visit the live portfolio: [Your Portfolio URL]
+Visit the live portfolio: [https://jeniton.vercel.app/](https://jeniton.vercel.app/) (I dont have a domain yet 😔)
 
 ## 👨‍💻 About
 
