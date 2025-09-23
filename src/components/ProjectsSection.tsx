@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Cpu, Brain, Microscope, ExternalLink, Github } from "lucide-react";
+import { Cpu, Brain, Microscope, ExternalLink, Github, HardDrive } from "lucide-react";
 import { useState } from "react";
 import misCapacitorImage from "@/assets/mis-capacitor.png";
 import mosEquipmentImage from "@/assets/mos-equipment.png";
@@ -17,6 +17,12 @@ import tipEtchingCADImage from "@/assets/TipEtching_CAD.png";
 import tipEtchingCloseUpTipImage from "@/assets/TipEtching_CloseUp.png";
 import tipEtchingJarsImage from "@/assets/TipEtching_Jars.png";
 import tipEtchingTipsImage from "@/assets/TipEtching_Tips.png";
+import cameraMountCADImage from "@/assets/CameraMount_CADScreenshot.png";
+import cameraPic1Image from "@/assets/CameraPic1.jpg";
+import cameraPic2Image from "@/assets/CameraPic2.jpg";
+import cameraPic3Image from "@/assets/CameraPic3.jpg";
+import TerminalSnap from "@/assets/TerminalSnapshot.png";
+import WiringSchematic from "@/assets/WiringSchematics.png";
 
 const ProjectsSection = () => {
   const [expandedTechs, setExpandedTechs] = useState<{[key: number]: boolean}>({});
@@ -68,6 +74,20 @@ const ProjectsSection = () => {
       icon: Cpu,
       images: [tipEtchingApparatusImage, tipEtchingCADImage, tipEtchingCloseUpTipImage, tipEtchingJarsImage, tipEtchingTipsImage],
       featured: true
+    },
+    {
+      title: "Camera Vision System - Peroxide Detection",
+      description: "Computer vision system for automated peroxide spray detection at Greenhouse Juice manufacturing facility",
+      fullDescription: [
+        "Retrofitted a gable-top machine with a camera vision system that uses computer vision built with OpenCV and a Raspberry Pi to detect hydrogen peroxide sprays on cartons",
+        "Implemented custom image processing algorithms using OpenCV to identify spray patterns and ensure proper coverage for food safety compliance",
+        "Designed and fabricated custom camera mounting system with CAD modeling to optimize viewing angles and minimize environmental interference"
+      ],
+      technologies: ["OpenCV", "Python", "Raspberry Pi", "OAK-1", "DepthAI", "Fusion360", "3D-Printing"],
+      icon: Brain,
+      images: [cameraPic1Image, cameraPic2Image, TerminalSnap, cameraPic3Image, cameraMountCADImage, WiringSchematic],
+      featured: true,
+      driveUrl: "https://drive.google.com/drive/folders/1CeBzAvMq2HXbmBNc0VMJWv7cpC-cmhlV?usp=sharing"
     },
     {
       title: "SigmaScholar - Hack The North 2025",
@@ -208,24 +228,44 @@ const ProjectsSection = () => {
                   )}
                 </div>
                 
-                {project.githubUrl && (
-                  <div className="flex justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300"
-                    >
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2"
+                {(project.githubUrl || project.driveUrl) && (
+                  <div className="flex justify-end gap-2">
+                    {project.githubUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300"
                       >
-                        <Github className="h-4 w-4" />
-                        View Repository
-                      </a>
-                    </Button>
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2"
+                        >
+                          <Github className="h-4 w-4" />
+                          View Repository
+                        </a>
+                      </Button>
+                    )}
+                    {project.driveUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300"
+                      >
+                        <a
+                          href={project.driveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2"
+                        >
+                          <HardDrive className="h-4 w-4" />
+                          View Files
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 )}
               </CardContent>
