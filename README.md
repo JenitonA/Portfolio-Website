@@ -19,7 +19,7 @@ This portfolio showcases my journey as a Nanotechnology Engineering student at t
 - **Frontend**: React, TypeScript, Vite
 - **Styling**: Tailwind CSS, shadcn/ui components
 - **Animations**: Custom CSS animations and transitions
-- **Deployment**: [Your deployment platform]
+- **Deployment**: Vercel
 
 ## 📂 Project Structure
 
