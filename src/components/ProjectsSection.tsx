@@ -3,7 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Cpu, Brain, Microscope, ExternalLink, Github, HardDrive } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useScrollAnimation } from "@/hooks/use-parallax";
 import misCapacitorImage from "@/assets/mis-capacitor.png";
 import mosEquipmentImage from "@/assets/mos-equipment.png";
 import mosCleanroomImage from "@/assets/mos-cleanroom.png";
@@ -26,6 +27,14 @@ import WiringSchematic from "@/assets/WiringSchematics.png";
 
 const ProjectsSection = () => {
   const [expandedTechs, setExpandedTechs] = useState<{[key: number]: boolean}>({});
+  const sectionRef = useRef<HTMLElement>(null);
+  const { isVisible, setElement } = useScrollAnimation(0.1);
+  
+  useEffect(() => {
+    if (sectionRef.current) {
+      setElement(sectionRef.current);
+    }
+  }, [setElement]);
 
   const toggleTechExpansion = (projectIndex: number) => {
     setExpandedTechs(prev => ({
@@ -132,7 +141,13 @@ const ProjectsSection = () => {
   ];
 
   return (
-    <section id="projects" className="py-20 px-6 bg-secondary/20">
+    <section 
+      ref={sectionRef}
+      id="projects" 
+      className={`py-20 px-6 bg-secondary/20 transition-all duration-1000 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}
+    >
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16 animate-slide-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -147,8 +162,13 @@ const ProjectsSection = () => {
           {projects.filter(p => p.featured).map((project, index) => (
             <Card 
               key={index}
-              className="group hover:shadow-glow-accent transition-all duration-500 border-border/50 hover:border-accent/30 bg-card/80 backdrop-blur-sm overflow-hidden"
-              style={{ animationDelay: `${index * 0.2}s` }}
+              className={`group hover:shadow-glow-accent transition-all duration-700 border-border/50 hover:border-accent/30 bg-card/80 backdrop-blur-sm overflow-hidden hover:scale-[1.02] ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+              }`}
+              style={{ 
+                animationDelay: `${index * 0.2}s`,
+                transitionDelay: isVisible ? `${index * 0.1}s` : '0s'
+              }}
             >
               {project.images && (
                 <div className="relative overflow-hidden">
@@ -289,7 +309,12 @@ const ProjectsSection = () => {
           {projects.filter(p => !p.featured).map((project, index) => (
             <Card 
               key={index}
-              className="group hover:shadow-glow-primary transition-all duration-300 border-border/50 hover:border-primary/30 bg-card/60 backdrop-blur-sm overflow-hidden"
+              className={`group hover:shadow-glow-primary transition-all duration-500 border-border/50 hover:border-primary/30 bg-card/60 backdrop-blur-sm overflow-hidden hover:scale-105 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{
+                transitionDelay: isVisible ? `${(index + 4) * 0.1}s` : '0s'
+              }}
             >
               {project.images && (
                 <div className="relative overflow-hidden">

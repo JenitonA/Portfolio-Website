@@ -1,8 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Code, Microscope, Settings, Cpu } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { useScrollAnimation } from "@/hooks/use-parallax";
 
 const SkillsSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { isVisible, setElement } = useScrollAnimation(0.1);
+
+  useEffect(() => {
+    if (sectionRef.current) {
+      setElement(sectionRef.current);
+    }
+  }, [setElement]);
+
   const skillCategories = [
     {
       title: "Programming Languages",
@@ -38,7 +49,13 @@ const SkillsSection = () => {
   ];
 
   return (
-    <section id="skills" className="py-20 px-6">
+    <section 
+      ref={sectionRef}
+      id="skills" 
+      className={`py-20 px-6 bg-secondary/20 transition-all duration-1000 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}
+    >
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16 animate-slide-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -53,8 +70,13 @@ const SkillsSection = () => {
           {skillCategories.map((category, index) => (
             <Card 
               key={index}
-              className={`group hover:shadow-glow-${category.color} transition-all duration-500 border-border/50 hover:border-${category.color}/30 bg-card/50 backdrop-blur-sm`}
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className={`group hover:shadow-glow-accent transition-all duration-700 border-border/50 hover:border-accent/30 bg-card/80 backdrop-blur-sm hover:scale-105 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+              }`}
+              style={{ 
+                animationDelay: `${index * 0.1}s`,
+                transitionDelay: isVisible ? `${index * 0.1}s` : '0s'
+              }}
             >
               <CardHeader>
                 <div className="flex items-center gap-3">
@@ -84,8 +106,18 @@ const SkillsSection = () => {
         </div>
 
         {/* Relevant Coursework */}
-        <Card className="bg-gradient-to-r from-card/80 to-secondary/20 border-border/50 backdrop-blur-sm">
+        <Card 
+          className={`bg-card/60 backdrop-blur-sm border-border/50 hover:shadow-glow-primary transition-all duration-700 hover:border-primary/30 hover:scale-[1.02] ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transitionDelay: isVisible ? '0.4s' : '0s'
+          }}
+        >
           <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">
+              <span className="gradient-text">Relevant Coursework</span>
+            </CardTitle>
             <div className="flex items-center gap-3">
               <div className="p-3 bg-accent/20 rounded-lg">
                 <Cpu className="h-6 w-6 text-accent" />

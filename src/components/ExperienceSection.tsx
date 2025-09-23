@@ -1,8 +1,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { useScrollAnimation } from "@/hooks/use-parallax";
 
 const ExperienceSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { isVisible, setElement } = useScrollAnimation(0.1);
+  
+  useEffect(() => {
+    if (sectionRef.current) {
+      setElement(sectionRef.current);
+    }
+  }, [setElement]);
+
   const experiences = [
     {
       title: "STM Tip Fabrication Lead",
@@ -43,7 +54,13 @@ const ExperienceSection = () => {
   ];
 
   return (
-    <section id="experience" className="py-20 px-6">
+    <section 
+      ref={sectionRef}
+      id="experience" 
+      className={`py-20 px-6 transition-all duration-1000 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}
+    >
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16 animate-slide-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -57,9 +74,14 @@ const ExperienceSection = () => {
         <div className="space-y-8">
           {experiences.map((exp, index) => (
             <Card 
-              key={index} 
-              className="group hover:shadow-glow-primary transition-all duration-500 border-border/50 hover:border-primary/30 bg-card/50 backdrop-blur-sm"
-              style={{ animationDelay: `${index * 0.2}s` }}
+              key={index}
+              className={`group hover:shadow-glow-primary transition-all duration-700 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm hover:scale-[1.01] ${
+                isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+              }`}
+              style={{ 
+                animationDelay: `${index * 0.2}s`,
+                transitionDelay: isVisible ? `${index * 0.15}s` : '0s'
+              }}
             >
               <CardHeader>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

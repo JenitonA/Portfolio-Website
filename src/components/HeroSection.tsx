@@ -1,15 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Github, Linkedin, Mail } from "lucide-react";
 import ProfilePic from "@/assets/ProfilePic.png";
+import { useParallax, useMouseParallax } from "@/hooks/use-parallax";
 
 const HeroSection = () => {
+  const parallaxOffset = useParallax(0.3);
+  const mouseParallax = useMouseParallax(0.05);
+  
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-hero">
-      {/* Animated background grid */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+      {/* Animated background grid with parallax */}
+      <div 
+        className="absolute inset-0 bg-grid-pattern opacity-10" 
+        style={{
+          transform: `translateY(${parallaxOffset * 0.5}px) translateX(${mouseParallax.x * 0.3}px)`
+        }}
+      />
       
-      {/* Floating particles */}
-      <div className="absolute inset-0">
+      {/* Floating particles with enhanced parallax */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          transform: `translateY(${parallaxOffset * 0.8}px) translateX(${mouseParallax.x * 0.5}px) translateY(${mouseParallax.y * 0.3}px)`
+        }}
+      >
         {/* Large primary particles */}
         <div className="absolute top-20 left-20 w-2 h-2 bg-primary rounded-full animate-bounce glow-primary" />
         <div className="absolute top-40 right-32 w-1.5 h-1.5 bg-primary-glow rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
@@ -42,8 +56,13 @@ const HeroSection = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-6xl mx-auto animate-slide-up">
           <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
-            {/* Profile Picture */}
-            <div className="flex-shrink-0">
+            {/* Profile Picture with subtle parallax */}
+            <div 
+              className="flex-shrink-0"
+              style={{
+                transform: `translateY(${parallaxOffset * -0.2}px) translateX(${mouseParallax.x * 0.1}px)`
+              }}
+            >
               <img 
                 src={ProfilePic} 
                 alt="Jeniton Augustinpillai" 
@@ -51,8 +70,13 @@ const HeroSection = () => {
               />
             </div>
             
-            {/* Content */}
-            <div className="text-center lg:text-left">
+            {/* Content with parallax */}
+            <div 
+              className="text-center lg:text-left"
+              style={{
+                transform: `translateY(${parallaxOffset * -0.1}px)`
+              }}
+            >
               {/* Main heading */}
               <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
                 <span className="gradient-text">Jeniton</span>
@@ -127,8 +151,13 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      {/* Scroll indicator with parallax */}
+      <div 
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
+        style={{
+          transform: `translateX(-50%) translateY(${parallaxOffset * -0.5}px)`
+        }}
+      >
         <ChevronDown className="h-6 w-6 text-muted-foreground" />
       </div>
     </section>

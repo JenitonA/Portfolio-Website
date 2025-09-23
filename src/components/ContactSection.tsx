@@ -1,8 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Linkedin, Github, Phone, MapPin } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { useScrollAnimation } from "@/hooks/use-parallax";
 
 const ContactSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { isVisible, setElement } = useScrollAnimation(0.1);
+  
+  useEffect(() => {
+    if (sectionRef.current) {
+      setElement(sectionRef.current);
+    }
+  }, [setElement]);
+
   const contactInfo = [
     {
       icon: Mail,
@@ -28,7 +39,13 @@ const ContactSection = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 px-6 bg-gradient-to-b from-background to-secondary/20">
+    <section 
+      ref={sectionRef}
+      id="contact" 
+      className={`py-20 px-6 bg-gradient-to-b from-background to-secondary/20 transition-all duration-1000 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}
+    >
       <div className="container mx-auto max-w-4xl">
         <div className="text-center mb-16 animate-slide-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
