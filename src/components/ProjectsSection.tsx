@@ -1,6 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import SpotlightCard from "@/components/effects/SpotlightCard";
+import SectionHeader from "@/components/SectionHeader";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Cpu, Brain, Microscope, ExternalLink, Github, HardDrive } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -144,25 +146,27 @@ const ProjectsSection = () => {
     <section 
       ref={sectionRef}
       id="projects" 
-      className={`py-20 px-6 bg-secondary/20 transition-all duration-1000 ${
+      className={`py-20 px-6 relative transition-all duration-1000 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
     >
+      {/* Soft radial backdrop so cards float on light, not flat dark */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 70% 45% at 50% 15%, hsl(213 92% 62% / 0.06) 0%, transparent 70%)" }}
+      />
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-16 animate-slide-up">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">Featured Projects</span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Hands-on semiconductor research and development projects showcasing technical expertise
-          </p>
-        </div>
+        <SectionHeader index={2} label="Work" title="Featured Projects" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {/* Bento-style grid: featured cards alternate wide/narrow spans on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 mb-12">
           {projects.filter(p => p.featured).map((project, index) => (
-            <Card 
+            <SpotlightCard
               key={index}
-              className={`group hover:shadow-glow-accent transition-all duration-700 border-border/50 hover:border-accent/30 bg-card/80 backdrop-blur-sm overflow-hidden hover:scale-[1.02] ${
+              className={`group hover:shadow-glow-accent transition-all duration-700 hover:scale-[1.015] ${
+                index % 4 === 0 || index % 4 === 3 ? 'lg:col-span-4' : 'lg:col-span-2'
+              } ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
               }`}
               style={{ 
@@ -255,7 +259,7 @@ const ProjectsSection = () => {
                         variant="outline"
                         size="sm"
                         asChild
-                        className="hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300"
+                        className="interactive hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300"
                       >
                         <a
                           href={project.githubUrl}
@@ -273,7 +277,7 @@ const ProjectsSection = () => {
                         variant="outline"
                         size="sm"
                         asChild
-                        className="hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300"
+                        className="interactive hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300"
                       >
                         <a
                           href={project.driveUrl}
@@ -289,27 +293,24 @@ const ProjectsSection = () => {
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </SpotlightCard>
           ))}
         </div>
 
         {/* Additional Projects Section */}
         {projects.filter(p => !p.featured).length > 0 && (
           <div className="text-center mb-12 mt-16">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">
+            <h3 className="font-display text-3xl md:text-4xl font-bold mb-4 tracking-tight">
               <span className="gradient-text">Additional Projects</span>
             </h3>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Software development and programming projects
-            </p>
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.filter(p => !p.featured).map((project, index) => (
-            <Card 
+            <SpotlightCard
               key={index}
-              className={`group hover:shadow-glow-primary transition-all duration-500 border-border/50 hover:border-primary/30 bg-card/60 backdrop-blur-sm overflow-hidden hover:scale-105 ${
+              className={`group hover:shadow-glow-primary transition-all duration-500 hover:scale-[1.03] hover:-translate-y-1 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{
@@ -381,7 +382,7 @@ const ProjectsSection = () => {
                       variant="outline"
                       size="sm"
                       asChild
-                      className="hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300 flex-1"
+                      className="interactive hover:bg-accent/20 hover:border-accent/30 transition-colors duration-300 flex-1"
                     >
                       <a
                         href={project.githubUrl}
@@ -399,7 +400,7 @@ const ProjectsSection = () => {
                       variant="outline"
                       size="sm"
                       asChild
-                      className="hover:bg-primary/20 hover:border-primary/30 transition-colors duration-300 flex-1"
+                      className="interactive hover:bg-primary/20 hover:border-primary/30 transition-colors duration-300 flex-1"
                     >
                       <a
                         href={project.externalUrl}
@@ -414,7 +415,7 @@ const ProjectsSection = () => {
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </SpotlightCard>
           ))}
         </div>
       </div>
