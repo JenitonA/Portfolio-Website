@@ -6,9 +6,9 @@ import { useScrollAnimation } from "@/hooks/use-parallax";
 import SpotlightCard from "@/components/effects/SpotlightCard";
 import SectionHeader from "@/components/SectionHeader";
 import harvardShield from "@/assets/harvard-shield.svg";
-import formulaNanoLogo from "@/assets/formula-nano-logo.png";
-import greenhouseJuiceLogo from "@/assets/greenhouse-juice-logo.png";
-import exoInsightsLogo from "@/assets/exo-insights-logo.png";
+import formulaNanoLogo from "@/assets/formula-nano-logo.webp";
+import greenhouseJuiceLogo from "@/assets/greenhouse-juice-logo.webp";
+import exoInsightsLogo from "@/assets/exo-insights-logo.webp";
 
 interface Experience {
   title: string;

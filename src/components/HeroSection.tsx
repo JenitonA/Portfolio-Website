@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Github, Linkedin, Mail } from "lucide-react";
-import ProfilePic from "@/assets/ProfilePic.png";
+import ProfilePic from "@/assets/ProfilePic.webp";
 import { DiaTextReveal } from "@/components/magicui/dia-text-reveal";
 import Aurora from "@/components/effects/Aurora";
 import { motion } from "framer-motion";
