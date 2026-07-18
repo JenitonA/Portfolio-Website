@@ -305,8 +305,9 @@ const ProjectsSection = () => {
               <span className="text-muted-foreground uppercase tracking-[0.3em] text-xs">More Work</span>
               <span className="w-8 metal-divider" />
             </div>
-            <h3 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
-              <span className="gradient-text">Additional Projects</span>
+            <h3 className="font-display font-extrabold uppercase text-4xl md:text-5xl tracking-tight leading-[0.95]">
+              Additional{" "}
+              <em className="font-elegant italic font-medium normal-case text-primary-glow">projects</em>
             </h3>
           </div>
         )}

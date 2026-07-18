@@ -138,28 +138,35 @@ ice-cyan accents and brushed-silver metallic gradients.
     box-shadow: var(--glow-strong);
   }
 
-  .gradient-text {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  /* ——— Expressive typography kit ———
+     Solid ink only, no gradients. Big, loud, editorial. */
+
+  /* Hollow display type: transparent fill, stroked outline.
+     Stroke width is em-based so it scales with the font size. */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 0.022em hsl(var(--foreground) / 0.9);
   }
 
-  .gradient-accent-text {
-    background: var(--gradient-accent);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .text-outline-primary {
+    color: transparent;
+    -webkit-text-stroke: 0.022em hsl(var(--primary-glow) / 0.9);
   }
 
-  /* Brushed-metal text with a slow moving sheen */
-  .metal-text {
-    background: var(--gradient-metal);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: metal-sheen 8s ease-in-out infinite;
+  /* Giant ghost numerals that sit behind section titles */
+  .ghost-number {
+    color: transparent;
+    -webkit-text-stroke: 1.5px hsl(var(--foreground) / 0.14);
+  }
+
+  /* Infinite horizontal type marquee — pair with two identical
+     child tracks so the -50% loop is seamless */
+  .marquee-track {
+    animation: marquee 32s linear infinite;
+  }
+
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
   }
 
   /* Extra-transparent glass for the floating navbar pill */
@@ -337,11 +344,6 @@ ice-cyan accents and brushed-silver metallic gradients.
   @keyframes pulse-glow {
     from { box-shadow: var(--glow-primary); }
     to { box-shadow: var(--glow-strong); }
-  }
-
-  @keyframes metal-sheen {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
   }
 
   /* Code font for technical content */

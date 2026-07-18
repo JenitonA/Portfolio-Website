@@ -74,8 +74,11 @@ const ContactSection = () => {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <h3 className="font-display text-3xl md:text-4xl font-bold mb-4 tracking-tight">
-            <span className="metal-text">Let's build the future of semiconductors</span>
+          <h3 className="font-display font-extrabold uppercase text-3xl md:text-5xl mb-5 tracking-tight leading-[1.02]">
+            Let's build the{" "}
+            <em className="font-elegant italic font-medium normal-case text-primary-glow">future</em>
+            {" "}of
+            <span className="block text-outline mt-1 whitespace-nowrap -mx-6 md:mx-0 text-[clamp(0.85rem,3.9vw,2.8rem)]">Semiconductors</span>
           </h3>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
             Passionate about contributing to the future of semiconductor manufacturing through

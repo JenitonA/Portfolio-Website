@@ -5,6 +5,16 @@ import { DiaTextReveal } from "@/components/magicui/dia-text-reveal";
 import Aurora from "@/components/effects/Aurora";
 import { motion } from "framer-motion";
 
+const MARQUEE_ITEMS = [
+  "Microfabrication",
+  "Nanoscale Devices",
+  "Semiconductors",
+  "AI & Computer Vision",
+  "STM Fabrication",
+  "Cleanroom Processing",
+  "Materials Research",
+];
+
 const SOCIALS = [
   { icon: Linkedin, href: "https://linkedin.com/in/jenitona/", label: "LinkedIn" },
   { icon: Github, href: "https://github.com/JenitonA", label: "GitHub" },
@@ -35,7 +45,7 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
             animations (including the name reveal) play as the site appears */}
         {introDone && (
         <motion.div
-          className="max-w-3xl mx-auto flex flex-col items-center text-center"
+          className="max-w-4xl mx-auto flex flex-col items-center text-center"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
@@ -58,21 +68,26 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
             </span>
           </div>
 
-          {/* Name */}
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.05] tracking-tight">
-            <DiaTextReveal text="Jeniton" color="#eef3fa" />
-            <br />
-            <DiaTextReveal text="Augustinpillai" color="#eef3fa" delay={0.3} />
+          {/* Name — stacked type block: solid first name, hollow outlined last name.
+              Sizes are vw-clamped so each line stays a single unbroken word,
+              and both lines land at roughly the same visual width. */}
+          <h1 className="font-display font-extrabold uppercase mb-8 leading-[0.92] tracking-tight">
+            <span className="block text-[clamp(2.6rem,8.5vw,7.9rem)]">
+              <DiaTextReveal text="Jeniton" color="#eef3fa" className="whitespace-nowrap" />
+            </span>
+            <span className="block text-[clamp(1.3rem,4.25vw,3.9rem)] text-outline">
+              <DiaTextReveal text="Augustinpillai" color="transparent" delay={0.3} className="whitespace-nowrap" />
+            </span>
           </h1>
 
           {/* Tagline */}
-          <div className="text-xl md:text-2xl mb-4">
-            <span className="gradient-accent-text font-semibold">Nanotechnology Engineering</span>
+          <div className="font-mono text-sm md:text-base uppercase tracking-[0.4em] text-accent mb-5">
+            Nanotechnology Engineering
           </div>
           <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl leading-relaxed">
             Passionate about advancing the{" "}
-            <span className="text-primary font-semibold">semiconductor industry</span> through
-            innovative microfabrication, nanoscale device development, and cutting-edge research.
+            <em className="font-elegant italic text-[1.2em] text-primary-glow">semiconductor industry</em>{" "}
+            through innovative microfabrication, nanoscale device development, and cutting-edge research.
           </p>
 
           {/* CTAs */}
@@ -116,8 +131,28 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce">
         <ChevronDown className="h-6 w-6 text-muted-foreground" />
+      </div>
+
+      {/* Type marquee — an endless strip of what this portfolio is about */}
+      <div className="absolute bottom-0 left-0 right-0 border-t border-border/50 py-3 overflow-hidden select-none">
+        <div className="marquee-track flex w-max">
+          {[0, 1].map((copy) => (
+            <div
+              key={copy}
+              aria-hidden={copy === 1}
+              className="flex items-center font-display font-semibold uppercase tracking-[0.3em] text-xs md:text-sm text-foreground/35 whitespace-nowrap"
+            >
+              {MARQUEE_ITEMS.map((item) => (
+                <span key={item} className="flex items-center">
+                  <span className="px-6">{item}</span>
+                  <span className="text-accent/60">✦</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

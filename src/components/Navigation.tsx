@@ -43,7 +43,7 @@ const Navigation = () => {
         {/* Logo */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="interactive px-3 py-1.5 text-lg font-display font-bold metal-text"
+          className="interactive px-3 py-1.5 text-lg font-display font-extrabold tracking-tight text-foreground"
           aria-label="Back to top"
         >
           JA

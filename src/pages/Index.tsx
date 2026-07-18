@@ -34,7 +34,10 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
             <div className="text-center md:text-left">
-              <div className="font-display text-2xl font-bold metal-text">Jeniton Augustinpillai</div>
+              <div className="font-display text-2xl md:text-3xl font-extrabold uppercase tracking-tight">
+                Jeniton{" "}
+                <span className="text-outline">Augustinpillai</span>
+              </div>
             </div>
             <nav className="flex flex-wrap justify-center gap-6 text-sm">
               {[

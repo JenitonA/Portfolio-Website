@@ -141,8 +141,8 @@ const SkillsSection = () => {
                 <Cpu className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <CardTitle className="text-xl">
-                  <span className="gradient-text">Relevant Coursework</span>
+                <CardTitle className="font-display text-xl uppercase tracking-wide">
+                  Relevant Coursework
                 </CardTitle>
                 <p className="text-muted-foreground">University of Waterloo • BASc Nanotechnology Engineering</p>
               </div>
