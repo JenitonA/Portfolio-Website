@@ -297,10 +297,15 @@ const ProjectsSection = () => {
           ))}
         </div>
 
-        {/* Additional Projects Section */}
+        {/* Additional Projects Section — mirrors the SectionHeader kicker style */}
         {projects.filter(p => !p.featured).length > 0 && (
-          <div className="text-center mb-12 mt-16">
-            <h3 className="font-display text-3xl md:text-4xl font-bold mb-4 tracking-tight">
+          <div className="text-center mb-12 mt-20">
+            <div className="flex items-center justify-center gap-3 mb-4 font-mono text-sm">
+              <span className="w-8 metal-divider" />
+              <span className="text-muted-foreground uppercase tracking-[0.3em] text-xs">More Work</span>
+              <span className="w-8 metal-divider" />
+            </div>
+            <h3 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
               <span className="gradient-text">Additional Projects</span>
             </h3>
           </div>

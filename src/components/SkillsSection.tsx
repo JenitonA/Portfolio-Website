@@ -16,7 +16,27 @@ const SkillsSection = () => {
     }
   }, [setElement]);
 
-  const skillCategories = [
+  // Static class strings so Tailwind's scanner keeps them in the build —
+  // template-built names like `bg-${color}/20` are invisible to it.
+  const colorStyles = {
+    primary: {
+      iconBg: "bg-primary/20",
+      icon: "text-primary",
+      titleHover: "group-hover:text-primary",
+    },
+    accent: {
+      iconBg: "bg-accent/20",
+      icon: "text-accent",
+      titleHover: "group-hover:text-accent",
+    },
+  } as const;
+
+  const skillCategories: {
+    title: string;
+    icon: typeof Code;
+    skills: string[];
+    color: keyof typeof colorStyles;
+  }[] = [
     {
       title: "Programming Languages",
       icon: Code,
@@ -24,7 +44,7 @@ const SkillsSection = () => {
       color: "primary"
     },
     {
-      title: "Metrology & Characterization", 
+      title: "Metrology & Characterization",
       icon: Microscope,
       skills: ["AFM", "TEM", "SEM", "Raman Spectroscopy", "UV-Vis", "FT-IR", "Ellipsometry", "XRD", "DSC"],
       color: "accent"
@@ -81,10 +101,10 @@ const SkillsSection = () => {
             >
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className={`p-3 bg-${category.color}/20 rounded-lg`}>
-                    <category.icon className={`h-6 w-6 text-${category.color}`} />
+                  <div className={`p-3 ${colorStyles[category.color].iconBg} rounded-lg`}>
+                    <category.icon className={`h-6 w-6 ${colorStyles[category.color].icon}`} />
                   </div>
-                  <CardTitle className={`text-xl group-hover:text-${category.color} transition-colors duration-300`}>
+                  <CardTitle className={`text-xl ${colorStyles[category.color].titleHover} transition-colors duration-300`}>
                     {category.title}
                   </CardTitle>
                 </div>

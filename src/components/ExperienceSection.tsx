@@ -107,7 +107,7 @@ const ExperienceSection = () => {
             {experiences.map((exp, index) => (
               <div
                 key={index}
-                className={`relative pl-14 transition-all duration-700 ${
+                className={`relative pl-10 md:pl-14 transition-all duration-700 ${
                   isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
                 }`}
                 style={{ transitionDelay: isVisible ? `${index * 0.15}s` : '0s' }}
@@ -118,9 +118,9 @@ const ExperienceSection = () => {
                 <SpotlightCard className="group hover:shadow-glow-primary transition-all duration-500 hover:-translate-y-1">
                   <CardHeader>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 md:gap-4 min-w-0">
                         {exp.logo && (
-                          <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-white/95 p-2 flex items-center justify-center border border-border/40 shadow-[0_4px_16px_hsl(219_40%_2%/0.4)]">
+                          <div className="flex-shrink-0 w-14 h-14 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-white/95 p-2 flex items-center justify-center border border-border/40 shadow-[0_4px_16px_hsl(219_40%_2%/0.4)]">
                             <img
                               src={exp.logo}
                               alt={exp.logoAlt ?? `${exp.company} logo`}
@@ -128,11 +128,11 @@ const ExperienceSection = () => {
                             />
                           </div>
                         )}
-                        <div>
-                          <CardTitle className="font-display text-2xl font-bold group-hover:text-primary transition-colors duration-300">
+                        <div className="min-w-0">
+                          <CardTitle className="font-display text-xl md:text-2xl font-bold group-hover:text-primary transition-colors duration-300">
                             {exp.title}
                           </CardTitle>
-                          <CardDescription className="text-lg font-semibold text-primary mt-1">
+                          <CardDescription className="text-base md:text-lg font-semibold text-primary mt-1">
                             {exp.company}
                           </CardDescription>
                         </div>

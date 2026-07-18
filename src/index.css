@@ -350,10 +350,27 @@ ice-cyan accents and brushed-silver metallic gradients.
   }
 
   /* Smooth scrolling; reserve the scrollbar gutter permanently so
-     locking/unlocking scroll (quote intro) never shifts the layout */
+     locking/unlocking scroll (quote intro) never shifts the layout.
+     scroll-padding-top keeps section headers clear of the floating navbar. */
   html {
     scroll-behavior: smooth;
     scrollbar-gutter: stable;
+    scroll-padding-top: 5.5rem;
+  }
+
+  /* Honor reduced-motion preferences: kill decorative animation & smooth scroll */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   /* Selection colors */

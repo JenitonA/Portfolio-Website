@@ -116,7 +116,7 @@ const ContactSection = () => {
         </SpotlightCard>
 
         {/* Contact info chips */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {contactLinks.map((info, index) => {
             const content = (
               <SpotlightCard
@@ -134,7 +134,7 @@ const ContactSection = () => {
                     <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   )}
                 </div>
-                <div className="text-sm font-medium group-hover:text-primary transition-colors duration-300 break-words max-w-full">
+                <div className="text-sm lg:text-xs font-medium group-hover:text-primary transition-colors duration-300 break-words max-w-full">
                   {info.value}
                 </div>
               </SpotlightCard>
