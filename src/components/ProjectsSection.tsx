@@ -154,7 +154,7 @@ const ProjectsSection = () => {
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 70% 45% at 50% 15%, hsl(213 92% 62% / 0.06) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse 70% 45% at 50% 15%, hsl(42 90% 55% / 0.05) 0%, transparent 70%)" }}
       />
       <div className="container mx-auto max-w-7xl">
         <SectionHeader index={2} label="Work" title="Featured Projects" />
@@ -305,9 +305,8 @@ const ProjectsSection = () => {
               <span className="text-muted-foreground uppercase tracking-[0.3em] text-xs">More Work</span>
               <span className="w-8 metal-divider" />
             </div>
-            <h3 className="font-display font-extrabold uppercase text-4xl md:text-5xl tracking-tight leading-[0.95]">
-              Additional{" "}
-              <em className="font-elegant italic font-medium normal-case text-primary-glow">projects</em>
+            <h3 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+              Additional Projects
             </h3>
           </div>
         )}

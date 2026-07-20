@@ -96,7 +96,8 @@ const ExperienceSection = () => {
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
     >
-      <div className="container mx-auto max-w-4xl">
+      {/* Shifted left on wide screens so the particle knot on the right stays visible */}
+      <div className="container mx-auto max-w-4xl lg:max-w-3xl lg:mx-0 lg:ml-[5vw]">
         <SectionHeader index={1} label="Career" title="Experience" />
 
         {/* Glowing timeline */}

@@ -43,7 +43,7 @@ const Navigation = () => {
         {/* Logo */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="interactive px-3 py-1.5 text-lg font-display font-extrabold tracking-tight text-foreground"
+          className="interactive px-3 py-1.5 text-lg font-display font-bold text-foreground"
           aria-label="Back to top"
         >
           JA
@@ -57,7 +57,7 @@ const Navigation = () => {
               onClick={() => scrollToSection(item.href)}
               className={`interactive px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-300 ${
                 activeSection === item.href
-                  ? "bg-primary/15 text-primary-glow shadow-[0_0_16px_hsl(213_92%_62%/0.25)]"
+                  ? "bg-primary/15 text-primary-glow shadow-[0_0_16px_hsl(42_90%_55%/0.25)]"
                   : "text-foreground/70 hover:text-foreground hover:bg-muted/40"
               }`}
             >
