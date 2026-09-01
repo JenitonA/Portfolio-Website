@@ -1,5 +1,5 @@
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Badge, badgeVariants } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import SpotlightCard from "@/components/effects/SpotlightCard";
 import SectionHeader from "@/components/SectionHeader";
@@ -157,7 +157,7 @@ const ProjectsSection = () => {
         style={{ background: "radial-gradient(ellipse 70% 45% at 50% 15%, hsl(42 90% 55% / 0.05) 0%, transparent 70%)" }}
       />
       <div className="container mx-auto max-w-7xl">
-        <SectionHeader index={2} label="Work" title="Featured Projects" />
+        <SectionHeader title="Featured Projects" />
 
         {/* Bento-style grid: featured cards alternate wide/narrow spans on desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 mb-12">
@@ -180,9 +180,11 @@ const ProjectsSection = () => {
                     <CarouselContent>
                       {project.images.map((image, imageIndex) => (
                         <CarouselItem key={imageIndex}>
-                          <img 
-                            src={image} 
+                          <img
+                            src={image}
                             alt={`${project.title} - Image ${imageIndex + 1}`}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         </CarouselItem>
@@ -203,7 +205,7 @@ const ProjectsSection = () => {
               <CardHeader>
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <CardTitle className="text-xl font-bold group-hover:text-accent transition-colors duration-300">
+                    <CardTitle className="font-display text-xl font-bold tracking-tight group-hover:text-accent transition-colors duration-300">
                       {project.title}
                     </CardTitle>
                     <CardDescription className="text-base mt-2">
@@ -239,16 +241,17 @@ const ProjectsSection = () => {
                     </Badge>
                   ))}
                   {project.technologies.length > 4 && (
-                    <Badge 
-                      variant="outline" 
-                      className="text-xs cursor-pointer hover:bg-accent/10 transition-colors duration-300"
+                    <button
+                      type="button"
                       onClick={() => toggleTechExpansion(index)}
+                      aria-expanded={!!expandedTechs[index]}
+                      className={badgeVariants({ variant: "outline" }) + " text-xs cursor-pointer hover:bg-accent/10 transition-colors duration-300"}
                     >
-                      {expandedTechs[index] 
-                        ? 'Show less' 
+                      {expandedTechs[index]
+                        ? 'Show less'
                         : `+${project.technologies.length - 4} more`
                       }
-                    </Badge>
+                    </button>
                   )}
                 </div>
                 
@@ -297,17 +300,12 @@ const ProjectsSection = () => {
           ))}
         </div>
 
-        {/* Additional Projects Section — mirrors the SectionHeader kicker style */}
         {projects.filter(p => !p.featured).length > 0 && (
           <div className="text-center mb-12 mt-20">
-            <div className="flex items-center justify-center gap-3 mb-4 font-mono text-sm">
-              <span className="w-8 metal-divider" />
-              <span className="text-muted-foreground uppercase tracking-[0.3em] text-xs">More Work</span>
-              <span className="w-8 metal-divider" />
-            </div>
             <h3 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-foreground">
               Additional Projects
             </h3>
+            <div className="metal-divider w-16 mx-auto mt-5" />
           </div>
         )}
 
@@ -328,9 +326,11 @@ const ProjectsSection = () => {
                     <CarouselContent>
                       {project.images.map((image, imageIndex) => (
                         <CarouselItem key={imageIndex}>
-                          <img 
-                            src={image} 
+                          <img
+                            src={image}
                             alt={`${project.title} - Image ${imageIndex + 1}`}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         </CarouselItem>
@@ -355,7 +355,7 @@ const ProjectsSection = () => {
                       <project.icon className="h-5 w-5 text-primary" />
                     </div>
                   )}
-                  <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">
+                  <CardTitle className="font-display text-lg tracking-tight group-hover:text-primary transition-colors duration-300">
                     {project.title}
                   </CardTitle>
                 </div>

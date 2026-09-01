@@ -108,6 +108,10 @@ export default {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "menu-in": {
+          "0%": { opacity: "0", transform: "translateY(-4px) scale(0.98)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
         "shimmer": {
           "0%": { backgroundPosition: "200% 50%" },
           "100%": { backgroundPosition: "-200% 50%" },
@@ -124,6 +128,7 @@ export default {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite alternate",
         "slide-up": "slide-up 0.6s ease-out",
         "fade-in": "fade-in 0.8s ease-out",
+        "menu-in": "menu-in 0.2s cubic-bezier(0.23, 1, 0.32, 1)",
         "shimmer": "shimmer 6s linear infinite",
         "beam-drift": "beam-drift 14s ease-in-out infinite",
       },

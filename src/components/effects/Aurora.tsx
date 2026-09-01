@@ -136,11 +136,21 @@ export default function Aurora(props: AuroraProps) {
     const ctn = ctnDom.current;
     if (!ctn) return;
 
-    const renderer = new Renderer({
-      alpha: true,
-      premultipliedAlpha: true,
-      antialias: true
-    });
+    /* WebGL may be unavailable (Safari Lockdown Mode, GPU blocklists) and the
+       shader needs WebGL2 — degrade to no aurora instead of crashing the app */
+    let renderer: Renderer;
+    try {
+      // no MSAA: the aurora is a single fullscreen triangle, so antialiasing
+      // has nothing to smooth and only costs fill rate
+      renderer = new Renderer({
+        alpha: true,
+        premultipliedAlpha: true,
+        antialias: false
+      });
+    } catch {
+      return;
+    }
+    if (!renderer.gl || !renderer.isWebgl2) return;
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
@@ -171,14 +181,14 @@ export default function Aurora(props: AuroraProps) {
     });
 
     // Mouse tracking (normalized to the container, y-up to match UV space).
-    // The target updates instantly; the uniform eases toward it each frame.
+    // The handler only records raw client coords; the (layout-forcing)
+    // getBoundingClientRect read happens at most once per rendered frame.
     const mouse = { x: 0.5, y: 0.5 };
     const targetMouse = { x: 0.5, y: 0.5 };
+    const lastPointer = { x: -1, y: -1 };
     const handleMouseMove = (event: globalThis.MouseEvent) => {
-      const rect = ctn.getBoundingClientRect();
-      if (rect.height === 0 || rect.width === 0) return;
-      targetMouse.x = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
-      targetMouse.y = Math.min(Math.max(1 - (event.clientY - rect.top) / rect.height, 0), 1);
+      lastPointer.x = event.clientX;
+      lastPointer.y = event.clientY;
     };
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
@@ -194,7 +204,13 @@ export default function Aurora(props: AuroraProps) {
     const mesh = new Mesh(gl, { geometry, program });
     ctn.appendChild(gl.canvas);
 
+    // Color-stop uniforms are recomputed only when the prop actually changes —
+    // parsing three hex colors into fresh arrays every frame is pure GC churn
+    let cachedStops = colorStops;
+    let cachedStopValues = colorStopsArray;
+
     let animateId = 0;
+    let running = false;
     const update = (t: number) => {
       animateId = requestAnimationFrame(update);
       const { time = t * 0.01, speed = 1.0 } = propsRef.current;
@@ -202,22 +218,51 @@ export default function Aurora(props: AuroraProps) {
       program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
       program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
       // Ease the uniform toward the cursor for a fluid, lag-behind feel
+      if (lastPointer.x >= 0) {
+        const rect = ctn.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          targetMouse.x = Math.min(Math.max((lastPointer.x - rect.left) / rect.width, 0), 1);
+          targetMouse.y = Math.min(Math.max(1 - (lastPointer.y - rect.top) / rect.height, 0), 1);
+        }
+      }
       mouse.x += (targetMouse.x - mouse.x) * 0.05;
       mouse.y += (targetMouse.y - mouse.y) * 0.05;
       program.uniforms.uMouse.value = [mouse.x, mouse.y];
       const stops = propsRef.current.colorStops ?? colorStops;
-      program.uniforms.uColorStops.value = stops.map(hex => {
-        const c = new Color(hex);
-        return [c.r, c.g, c.b];
-      });
+      if (stops !== cachedStops) {
+        cachedStops = stops;
+        cachedStopValues = stops.map(hex => {
+          const c = new Color(hex);
+          return [c.r, c.g, c.b];
+        });
+      }
+      program.uniforms.uColorStops.value = cachedStopValues;
       renderer.render({ scene: mesh });
     };
-    animateId = requestAnimationFrame(update);
+
+    // The aurora lives in the hero band: once it scrolls out of view its
+    // render loop stops entirely instead of burning GPU behind the page
+    const start = () => {
+      if (running) return;
+      running = true;
+      animateId = requestAnimationFrame(update);
+    };
+    const stop = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(animateId);
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) start();
+      else stop();
+    });
+    io.observe(ctn);
 
     resize();
 
     return () => {
-      cancelAnimationFrame(animateId);
+      io.disconnect();
+      stop();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", handleMouseMove);
       if (ctn && gl.canvas.parentNode === ctn) {

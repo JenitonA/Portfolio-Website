@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-12T07:11:04Z",
+  "title": "Design System: Jeniton Augustinpillai — Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Lamplight Gold",
+        "canonical": "hsl(42 90% 55%)",
+        "tonalRamp": ["hsl(42 90% 15%)", "hsl(42 90% 25%)", "hsl(42 90% 35%)", "hsl(42 90% 45%)", "hsl(42 90% 55%)", "hsl(42 90% 68%)", "hsl(42 90% 80%)", "hsl(42 90% 92%)"]
+      },
+      "primary-glow": {
+        "role": "primary",
+        "displayName": "Lamplight Flare",
+        "canonical": "hsl(45 100% 68%)",
+        "tonalRamp": ["hsl(45 100% 15%)", "hsl(45 100% 26%)", "hsl(45 100% 37%)", "hsl(45 100% 48%)", "hsl(45 100% 58%)", "hsl(45 100% 68%)", "hsl(45 100% 80%)", "hsl(45 100% 92%)"]
+      },
+      "accent": {
+        "role": "tertiary",
+        "displayName": "Veritas Crimson",
+        "canonical": "hsl(352 68% 56%)",
+        "tonalRamp": ["hsl(352 68% 15%)", "hsl(352 68% 25%)", "hsl(352 68% 35%)", "hsl(352 68% 45%)", "hsl(352 68% 56%)", "hsl(352 68% 68%)", "hsl(352 68% 80%)", "hsl(352 68% 92%)"]
+      },
+      "accent-glow": {
+        "role": "tertiary",
+        "displayName": "Veritas Flare",
+        "canonical": "hsl(352 90% 68%)",
+        "tonalRamp": ["hsl(352 90% 15%)", "hsl(352 90% 26%)", "hsl(352 90% 37%)", "hsl(352 90% 48%)", "hsl(352 90% 58%)", "hsl(352 90% 68%)", "hsl(352 90% 80%)", "hsl(352 90% 92%)"]
+      },
+      "ember-black": {
+        "role": "neutral",
+        "displayName": "Ember Black",
+        "canonical": "hsl(24 14% 5%)",
+        "tonalRamp": ["hsl(24 14% 5%)", "hsl(24 14% 12%)", "hsl(24 14% 22%)", "hsl(24 14% 34%)", "hsl(24 14% 48%)", "hsl(24 14% 64%)", "hsl(24 14% 80%)", "hsl(24 14% 94%)"]
+      },
+      "warm-ivory": {
+        "role": "neutral",
+        "displayName": "Warm Ivory",
+        "canonical": "hsl(40 28% 94%)",
+        "tonalRamp": ["hsl(40 28% 15%)", "hsl(40 28% 27%)", "hsl(40 28% 39%)", "hsl(40 28% 51%)", "hsl(40 28% 63%)", "hsl(40 28% 75%)", "hsl(40 28% 85%)", "hsl(40 28% 94%)"]
+      },
+      "card-charcoal": {
+        "role": "neutral",
+        "displayName": "Card Charcoal",
+        "canonical": "hsl(26 12% 8%)",
+        "tonalRamp": ["hsl(26 12% 8%)", "hsl(26 12% 16%)", "hsl(26 12% 26%)", "hsl(26 12% 38%)", "hsl(26 12% 50%)", "hsl(26 12% 64%)", "hsl(26 12% 80%)", "hsl(26 12% 94%)"]
+      },
+      "smoked-umber": {
+        "role": "secondary",
+        "displayName": "Smoked Umber",
+        "canonical": "hsl(26 10% 13%)",
+        "tonalRamp": ["hsl(26 10% 8%)", "hsl(26 10% 13%)", "hsl(26 10% 24%)", "hsl(26 10% 36%)", "hsl(26 10% 48%)", "hsl(26 10% 62%)", "hsl(26 10% 78%)", "hsl(26 10% 93%)"]
+      },
+      "warm-taupe": {
+        "role": "neutral",
+        "displayName": "Warm Taupe",
+        "canonical": "hsl(35 10% 64%)",
+        "tonalRamp": ["hsl(35 10% 15%)", "hsl(35 10% 26%)", "hsl(35 10% 38%)", "hsl(35 10% 50%)", "hsl(35 10% 64%)", "hsl(35 10% 75%)", "hsl(35 10% 85%)", "hsl(35 10% 94%)"]
+      },
+      "border-umber": {
+        "role": "neutral",
+        "displayName": "Border Umber",
+        "canonical": "hsl(30 10% 16%)",
+        "tonalRamp": ["hsl(30 10% 8%)", "hsl(30 10% 16%)", "hsl(30 10% 27%)", "hsl(30 10% 39%)", "hsl(30 10% 51%)", "hsl(30 10% 65%)", "hsl(30 10% 80%)", "hsl(30 10% 93%)"]
+      },
+      "brass-highlight": {
+        "role": "neutral",
+        "displayName": "Brass Highlight",
+        "canonical": "hsl(42 30% 88%)",
+        "tonalRamp": ["hsl(42 30% 15%)", "hsl(42 30% 27%)", "hsl(42 30% 39%)", "hsl(42 30% 51%)", "hsl(42 30% 63%)", "hsl(42 30% 75%)", "hsl(42 30% 88%)", "hsl(42 30% 95%)"]
+      },
+      "brass-mid": {
+        "role": "neutral",
+        "displayName": "Brass Mid",
+        "canonical": "hsl(38 14% 58%)",
+        "tonalRamp": ["hsl(38 14% 15%)", "hsl(38 14% 26%)", "hsl(38 14% 37%)", "hsl(38 14% 48%)", "hsl(38 14% 58%)", "hsl(38 14% 70%)", "hsl(38 14% 82%)", "hsl(38 14% 93%)"]
+      },
+      "brass-shadow": {
+        "role": "neutral",
+        "displayName": "Brass Shadow",
+        "canonical": "hsl(28 14% 24%)",
+        "tonalRamp": ["hsl(28 14% 10%)", "hsl(28 14% 24%)", "hsl(28 14% 35%)", "hsl(28 14% 46%)", "hsl(28 14% 57%)", "hsl(28 14% 69%)", "hsl(28 14% 82%)", "hsl(28 14% 94%)"]
+      },
+      "destructive": {
+        "role": "error",
+        "displayName": "Signal Red",
+        "canonical": "hsl(0 84% 60%)",
+        "tonalRamp": ["hsl(0 84% 15%)", "hsl(0 84% 26%)", "hsl(0 84% 37%)", "hsl(0 84% 48%)", "hsl(0 84% 60%)", "hsl(0 84% 70%)", "hsl(0 84% 81%)", "hsl(0 84% 92%)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The hero name only — Space Grotesk 700, solid ink, word-by-word reveal." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles inside the numbered SectionHeader." },
+      "body": { "displayName": "Body", "purpose": "Descriptions and copy in Warm Taupe or Warm Ivory." },
+      "label": { "displayName": "Label / Kicker", "purpose": "JetBrains Mono uppercase kickers with 0.3em tracking; dates, scroll cue." },
+      "elegant": { "displayName": "Elegant Accent", "purpose": "Playfair Display italic — at most one accent word per composition; also the intro quote." }
+    },
+    "shadows": [
+      { "name": "glow-primary", "value": "0 0 24px hsl(42 90% 55% / 0.25), 0 8px 32px hsl(24 30% 2% / 0.5)", "purpose": "Resting glow for gold-lit elements (headshot, key surfaces)." },
+      { "name": "glow-accent", "value": "0 0 24px hsl(352 68% 56% / 0.22), 0 8px 32px hsl(24 30% 2% / 0.5)", "purpose": "Crimson glow; rare, punctuation only." },
+      { "name": "glow-strong", "value": "0 0 40px hsl(42 90% 55% / 0.35), 0 0 90px hsl(42 90% 55% / 0.15)", "purpose": "Hot end of pulse-glow; hover/active emphasis." },
+      { "name": "inset-brass-edge", "value": "inset 0 1px 0 hsl(42 30% 88% / 0.08)", "purpose": "Machined top-edge highlight on every glass and metal surface (0.07–0.25 alpha by prominence)." },
+      { "name": "ambient-ground", "value": "0 8px 32px hsl(24 30% 2% / 0.45)", "purpose": "Deep warm ambient that grounds glass panels; atmosphere, not elevation." }
+    ],
+    "motion": [
+      { "name": "transition-smooth", "value": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for state changes (hover, color, border)." },
+      { "name": "transition-spring", "value": "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)", "purpose": "Playful overshoot for arrivals." },
+      { "name": "slide-up", "value": "slide-up 0.6s ease-out", "purpose": "Section/header entrance: 20px rise + fade." },
+      { "name": "fade-in", "value": "fade-in 0.8s ease-out", "purpose": "Soft entrance for overlays and dropdowns." },
+      { "name": "float", "value": "float 6s ease-in-out infinite", "purpose": "Slow idle levitation for decorative elements." },
+      { "name": "pulse-glow", "value": "pulse-glow 2s ease-in-out infinite alternate", "purpose": "Breathing glow between glow-primary and glow-strong." },
+      { "name": "shine-sweep", "value": "shine-sweep 0.7s ease", "purpose": "One skewed light sweep across a button face on hover." },
+      { "name": "beam-drift", "value": "beam-drift 14s ease-in-out infinite", "purpose": "Ambient background beam drift, 12° rotation." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "2xl-container", "value": "1400px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Contact Pill Button",
+      "kind": "button",
+      "refersTo": "button-contact",
+      "description": "The footer's primary action — gold-tinted pill that brightens toward Lamplight Flare on hover.",
+      "html": "<button class=\"ds-btn-contact\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/></svg>Email Me</button>",
+      "css": ".ds-btn-contact { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 9999px; border: 1px solid hsl(42 90% 55% / 0.4); background: hsl(42 90% 55% / 0.1); color: hsl(var(--foreground, 40 28% 94%)); font-family: Inter, system-ui, sans-serif; font-size: 1.125rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-contact:hover { background: hsl(42 90% 55% / 0.2); border-color: hsl(45 100% 68% / 0.6); color: hsl(var(--primary-glow, 45 100% 68%)); } .ds-btn-contact:focus-visible { outline: 2px solid hsl(var(--ring, 42 90% 55%)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Metal Button",
+      "kind": "button",
+      "description": "Polished brass instrument surface — vertical metal gradient, inset highlight, gold glow that intensifies on hover.",
+      "html": "<button class=\"ds-btn-metal\">View Project</button>",
+      "css": ".ds-btn-metal { padding: 12px 28px; border-radius: 12px; background: linear-gradient(180deg, hsl(38 24% 28%) 0%, hsl(30 18% 15%) 50%, hsl(26 16% 9%) 100%); border: 1px solid hsl(42 30% 88% / 0.2); box-shadow: inset 0 1px 0 hsl(42 30% 88% / 0.25), 0 0 20px hsl(42 90% 55% / 0.15); color: hsl(var(--foreground, 40 28% 94%)); font-family: Inter, system-ui, sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-metal:hover { border-color: hsl(45 100% 68% / 0.5); box-shadow: inset 0 1px 0 hsl(42 30% 88% / 0.35), 0 0 32px hsl(42 90% 55% / 0.35); transform: translateY(-2px); } .ds-btn-metal:active { transform: translateY(0) scale(0.98); } .ds-btn-metal:focus-visible { outline: 2px solid hsl(var(--ring, 42 90% 55%)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Glass Card",
+      "kind": "card",
+      "refersTo": "card-glass",
+      "description": "Dark glass panel with brass edge — border warms toward gold on hover.",
+      "html": "<div class=\"ds-card-glass\"><h3 class=\"ds-card-glass__title\">MOS Capacitor Microfabrication</h3><p class=\"ds-card-glass__body\">Complete semiconductor device fabrication in a cleanroom environment using advanced microfabrication techniques.</p></div>",
+      "css": ".ds-card-glass { max-width: 340px; padding: 24px; border-radius: 12px; background: linear-gradient(160deg, hsl(26 12% 11% / 0.75), hsl(24 14% 7% / 0.85)); backdrop-filter: blur(14px); border: 1px solid hsl(42 30% 88% / 0.08); box-shadow: inset 0 1px 0 hsl(42 30% 88% / 0.07), 0 8px 32px hsl(24 30% 2% / 0.45); transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1); } .ds-card-glass:hover { border-color: hsl(42 90% 55% / 0.25); } .ds-card-glass__title { margin: 0 0 8px; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; color: hsl(var(--foreground, 40 28% 94%)); } .ds-card-glass__body { margin: 0; font-family: Inter, system-ui, sans-serif; font-size: 0.9rem; line-height: 1.625; color: hsl(var(--muted-foreground, 35 10% 64%)); }"
+    },
+    {
+      "name": "Tech Badge",
+      "kind": "chip",
+      "refersTo": "badge-secondary",
+      "description": "Smoked-umber pill for technology tags; gold variant for primary emphasis.",
+      "html": "<span class=\"ds-badge ds-badge--secondary\">Photolithography</span> <span class=\"ds-badge ds-badge--primary\">Featured</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; border: 1px solid transparent; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; transition: background 0.2s ease; } .ds-badge--secondary { background: hsl(var(--secondary, 26 10% 13%)); color: hsl(var(--secondary-foreground, 40 28% 94%)); } .ds-badge--secondary:hover { background: hsl(26 10% 13% / 0.8); } .ds-badge--primary { background: hsl(var(--primary, 42 90% 55%)); color: hsl(var(--primary-foreground, 24 14% 5%)); } .ds-badge--primary:hover { background: hsl(42 90% 55% / 0.8); }"
+    },
+    {
+      "name": "Navigation Pill",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Floating glass instrument: brass-framed pill with scroll-spy states — active items glow gold.",
+      "html": "<nav class=\"ds-nav-pill\"><button class=\"ds-nav-pill__logo\">JA</button><div class=\"ds-nav-pill__items\"><button class=\"ds-nav-pill__item ds-nav-pill__item--active\">Experience</button><button class=\"ds-nav-pill__item\">Projects</button><button class=\"ds-nav-pill__item\">Skills</button><button class=\"ds-nav-pill__item\">Contact</button></div></nav>",
+      "css": ".ds-nav-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 9999px; background: linear-gradient(160deg, hsl(26 12% 13% / 0.55), hsl(24 14% 8% / 0.65)); backdrop-filter: blur(22px) saturate(1.4); border: 1px solid hsl(42 30% 88% / 0.1); box-shadow: inset 0 1px 0 hsl(42 30% 88% / 0.08), 0 8px 32px hsl(24 30% 2% / 0.35); } .ds-nav-pill__logo { padding: 6px 12px; border: none; background: none; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 1.125rem; font-weight: 700; color: hsl(var(--foreground, 40 28% 94%)); cursor: pointer; } .ds-nav-pill__items { display: flex; gap: 4px; } .ds-nav-pill__item { padding: 6px 16px; border: none; border-radius: 9999px; background: none; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: hsl(40 28% 94% / 0.7); cursor: pointer; transition: color 0.3s, background 0.3s; } .ds-nav-pill__item:hover { color: hsl(var(--foreground, 40 28% 94%)); background: hsl(26 10% 12% / 0.4); } .ds-nav-pill__item--active { background: hsl(42 90% 55% / 0.15); color: hsl(var(--primary-glow, 45 100% 68%)); box-shadow: 0 0 16px hsl(42 90% 55% / 0.25); } .ds-nav-pill__item:focus-visible { outline: 2px solid hsl(var(--ring, 42 90% 55%)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Section Header",
+      "kind": "custom",
+      "description": "The act divider: crimson mono index, metal-divider tick, uppercase kicker, Space Grotesk headline.",
+      "html": "<div class=\"ds-section-header\"><div class=\"ds-section-header__kicker\"><span class=\"ds-section-header__index\">01</span><span class=\"ds-section-header__divider\"></span><span class=\"ds-section-header__label\">Projects</span></div><h2 class=\"ds-section-header__title\">Featured Work</h2></div>",
+      "css": ".ds-section-header { text-align: center; } .ds-section-header__kicker { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; } .ds-section-header__index { font-size: 0.875rem; color: hsl(var(--accent, 352 68% 56%)); } .ds-section-header__divider { width: 32px; height: 1px; background: linear-gradient(90deg, transparent 0%, hsl(38 14% 58% / 0.4) 25%, hsl(45 100% 68% / 0.5) 50%, hsl(38 14% 58% / 0.4) 75%, transparent 100%); } .ds-section-header__label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3em; color: hsl(var(--muted-foreground, 35 10% 64%)); } .ds-section-header__title { margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -0.025em; color: hsl(var(--foreground, 40 28% 94%)); }"
+    },
+    {
+      "name": "Timeline Node",
+      "kind": "custom",
+      "description": "Experience spine node: ember-filled circle with a gold border glowing outward and inward, on the gradient spine.",
+      "html": "<div class=\"ds-timeline\"><span class=\"ds-timeline__spine\"></span><span class=\"ds-timeline__node\"></span></div>",
+      "css": ".ds-timeline { position: relative; width: 24px; height: 120px; } .ds-timeline__spine { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-50%); background: linear-gradient(180deg, hsl(45 100% 68% / 0.6) 0%, hsl(42 90% 55% / 0.35) 40%, hsl(352 68% 56% / 0.25) 80%, transparent 100%); } .ds-timeline__node { position: absolute; left: 50%; top: 24px; width: 14px; height: 14px; transform: translateX(-50%); border-radius: 9999px; background: hsl(var(--background, 24 14% 5%)); border: 2px solid hsl(var(--primary, 42 90% 55%)); box-shadow: 0 0 12px hsl(42 90% 55% / 0.6), inset 0 0 4px hsl(42 90% 55% / 0.4); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Brass Cleanroom",
+    "overview": "Precision instruments in warm lamplight. The site renders a nanofabrication lab in heritage materials: warm near-black surfaces with an ember undertone, brass borders and dividers, dark glass panels, and light that behaves like instrument light — gold glows that respond to the cursor, an aurora that drifts above the hero, a particle field that hums beneath the sections. It is prestigious and warm, precise and technical, cinematic in atmosphere but quiet and confident in voice: the typography is solid ink, the motion is restrained, and the single expressive flourish is one italic serif word.\n\nTwo institutions light the room. Waterloo gold (primary) is the dominant voice — lamplight on every interactive surface, glow, and ring. Harvard crimson (accent) is punctuation — section index numbers, the second stop of the aurora, the tail of the timeline. The palette never cools; even the grays are warm (umber, taupe, brass), and pure neutral gray does not exist in the system.",
+    "keyCharacteristics": [
+      "Warm near-black (\"ember\") ground; no pure black except the intro overlay",
+      "Gold leads, crimson punctuates; both carry a paired -glow variant for light effects",
+      "Dark glass surfaces (blur 14–22px) framed by 1px brass gradient borders",
+      "Solid-ink typography; exactly one italic serif accent word per composition",
+      "Depth from light, not shade: glows and inset brass highlights replace drop shadows",
+      "Mono uppercase kickers with 0.3em tracking; numbered sections (\"01 / PROJECTS\")"
+    ],
+    "rules": [
+      { "name": "The Two Crests Rule", "body": "Gold is the voice; crimson is punctuation. Crimson never fills a surface, never styles a button, and never competes with gold in the same element — it appears in small, deliberate doses (an index number, a gradient stop, a spine fade).", "section": "colors" },
+      { "name": "The Warm Neutral Rule", "body": "No pure grays and no pure black surfaces. Every neutral in the system carries a warm hue (24–42°); a cool or achromatic neutral is a defect.", "section": "colors" },
+      { "name": "The Solid Ink Rule", "body": "Type is never gradient-filled, outlined, or image-masked. Ink is Warm Ivory (or Warm Taupe for secondary); color arrives through the one serif word and interactive states only.", "section": "typography" },
+      { "name": "The One Serif Word Rule", "body": "Playfair italic appears at most once per composition — a single word or phrase (e.g. nanofabrication). It is the site's only expressive typographic accent; adding a second dilutes it.", "section": "typography" },
+      { "name": "The Glow-Is-The-Shadow Rule", "body": "Elevation is expressed as emitted light, never as a neutral gray drop shadow. If an element needs more depth, brighten its glow or its brass edge — do not darken beneath it.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do define every color as an HSL custom property in src/index.css and consume it through Tailwind's token classes — the stylesheet header makes HSL mandatory.",
+      "Do announce every section with the numbered SectionHeader pattern: crimson mono index, metal-divider tick, 0.3em uppercase kicker.",
+      "Do frame floating or premium surfaces with the 1px metal-border brass gradient rather than a flat border.",
+      "Do express hover as light: brighten the glow, warm the border toward gold, lift -2px via interactive.",
+      "Do keep atmosphere layers (aurora, particles, beams) pointer-events-none, below z-10, and masked away from text.",
+      "Do honor prefers-reduced-motion — the global kill-switch in index.css must keep working for any new animation."
+    ],
+    "donts": [
+      "Don't use gradient, outlined, or image-masked text — typography is solid ink only (The Solid Ink Rule, confirmed in code comments).",
+      "Don't add gray drop shadows for elevation — glow is the shadow (confirmed by the user).",
+      "Don't fill surfaces or buttons with crimson; it is punctuation, never a voice (The Two Crests Rule).",
+      "Don't introduce cool or achromatic neutrals — every gray must carry a warm 24–42° hue (The Warm Neutral Rule).",
+      "Don't use more than one Playfair italic accent per composition (The One Serif Word Rule).",
+      "Don't replace the pill geometry of floating elements (nav, badges, contact actions) with rectangles."
+    ]
+  }
+}

@@ -6,22 +6,26 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
- * Ricardo-style particle field — deliberately NOT GPGPU:
+ * Ricardo-style particle field:
  *
  * - Every particle gets an anchor in each of four states: a 2D silicon
  *   lattice sheet (honeycomb, procedural), a torus knot (barycentric
  *   mesh sampling), a fully dispersed scatter volume, and a "JA"
  *   monogram (sampled from rasterized canvas text).
- * - Scrolling moves ONE global state value via GSAP ScrollTrigger; particle
- *   positions are recalculated on the CPU every frame by blending between
- *   neighbouring anchor sets along a piecewise choreography track.
- * - The cursor adds an XY displacement with a push force and a spring return,
- *   integrated per-particle on the CPU.
- * - Custom shaders are used ONLY for point rendering.
+ * - Scrolling moves ONE global state value via GSAP ScrollTrigger; the
+ *   blend between neighbouring anchor sets (and the idle "breathe"
+ *   wobble) is evaluated in the vertex shader, so the whole morph costs
+ *   the CPU nothing — only the pair of active anchor sets is uploaded,
+ *   and only when the pair changes.
+ * - The cursor adds an XY displacement with a push force and a spring
+ *   return. That physics is stateful, so it stays on the CPU — but it
+ *   only runs (and only re-uploads its buffer) while the cursor is near
+ *   the shape or residual motion remains. Idle frames skip it entirely.
  */
 
 /* Adaptive particle budget: phones get a lighter cloud, low-core devices
-   are clamped harder — the CPU integrates every particle every frame. */
+   are clamped harder — the CPU integrates every particle during cursor
+   interaction. */
 function particleBudget(): number {
   const w = window.innerWidth;
   const cores = navigator.hardwareConcurrency || 4;
@@ -203,15 +207,24 @@ function monogramAnchors(count: number): Float32Array {
 }
 
 const VERT = /* glsl */ `
+  attribute vec3 aPosB;
+  attribute vec2 aOffset;
   attribute float aSize;
   attribute float aTint;
+  attribute float aPhase;
   varying float vTint;
   varying float vFade;
   uniform float uPixelRatio;
+  uniform float uBlend;
+  uniform float uTime;
+  uniform float uBreathe;
 
   void main() {
     vTint = aTint;
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vec3 p = mix(position, aPosB, uBlend);
+    p.x += sin(uTime * 0.8 + aPhase) * uBreathe + aOffset.x;
+    p.y += cos(uTime * 0.7 + aPhase) * uBreathe + aOffset.y;
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = aSize * uPixelRatio * (34.0 / -mv.z);
     vFade = smoothstep(14.0, 4.0, -mv.z);
@@ -247,8 +260,19 @@ const ParticleField = () => {
     // phones don't benefit from >1.5x DPR on additive point sprites
     const maxDpr = () => (window.innerWidth < 768 ? 1.5 : 2);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr()));
+    /* three r185 requires WebGL2 and throws when no context can be created
+       (Safari Lockdown Mode, old Safari, GPU off) — skip the field, keep the site */
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    } catch {
+      return;
+    }
+    /* Adaptive resolution: start at native (capped) DPR; if frame times stay
+       high the soft additive sprites tolerate a lower ratio with no visible
+       change, so step down rather than let the whole page stutter. */
+    let dpr = Math.min(window.devicePixelRatio, maxDpr());
+    renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
     mount.appendChild(renderer.domElement);
 
@@ -266,13 +290,20 @@ const ParticleField = () => {
     ];
     knotGeo.dispose();
 
-    // The monogram uses a webfont — resample once it has actually loaded
-    document.fonts
-      .load('700 260px "Dancing Script"')
-      .then(() => {
-        shapes[3] = monogramAnchors(COUNT);
-      })
-      .catch(() => {});
+    // Measured bounding-sphere radius of an anchor set (unscaled, about the
+    // origin the shape rotates around) — used to keep it inside the frustum
+    // and to know when the cursor is close enough to matter.
+    const reachOf = (a: Float32Array) => {
+      let max = 0;
+      for (let i = 0; i < a.length; i += 3) {
+        const d = a[i] * a[i] + a[i + 1] * a[i + 1] + a[i + 2] * a[i + 2];
+        if (d > max) max = d;
+      }
+      return Math.sqrt(max);
+    };
+    const REACHES = shapes.map(reachOf);
+    const CUBE_REACH = REACHES[0];
+    const KNOT_REACH = REACHES[1];
 
     /* ——— Choreography tracks over page progress p ∈ [0, 1] ———
        hero: cube beside the name · experience: knot at right margin ·
@@ -284,17 +315,27 @@ const ParticleField = () => {
       const halfH = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
       const halfW = halfH * camera.aspect;
       const narrow = window.innerWidth < 1024;
-      // worst-case reach of each shape from its center (incl. rotation sweep),
-      // used to clamp positions so nothing pokes off screen
-      const CUBE_REACH = 3.1;
-      const KNOT_REACH = 2.4;
+      const MARGIN = 0.92; // keep ~8% air between any shape and the frame edge
+      // A rotating shape sweeps its whole bounding sphere, and points on the
+      // near side of the sphere project wider — sqrt(1 + k²) is the exact
+      // worst-case widening for a sphere in a perspective frustum.
+      const sweepX = Math.sqrt(1 + (halfW / camera.position.z) ** 2);
+      const sweepY = Math.sqrt(1 + (halfH / camera.position.z) ** 2);
+      // largest bounding radius that still fits when the shape is centered
+      const maxR = Math.min((MARGIN * halfW) / sweepX, (MARGIN * halfH) / sweepY);
       // cube: right of the hero text on wide screens, raised above it on narrow
-      const startX = narrow ? 0 : Math.max(0, Math.min(halfW * 0.57, halfW - CUBE_REACH));
-      const startY = narrow ? Math.min(halfH * 0.52, halfH - CUBE_REACH * 0.85) : 0.15;
-      // knot: in the right margin beside the experience cards
-      const knotX = narrow
-        ? halfW * 0.95
-        : Math.max(0, Math.min(halfW * 0.62, halfW - KNOT_REACH));
+      const cubeScale = Math.min(narrow ? 0.65 : 0.8, maxR / CUBE_REACH);
+      const cubeR = cubeScale * CUBE_REACH;
+      const startX = narrow
+        ? 0
+        : Math.max(0, Math.min(halfW * 0.57, MARGIN * halfW - cubeR * sweepX));
+      const startY = narrow
+        ? Math.max(0, Math.min(halfH * 0.52, MARGIN * halfH - cubeR * sweepY))
+        : Math.min(0.15, MARGIN * halfH - cubeR * sweepY);
+      // knot: in the right margin beside the experience cards; centers itself
+      // when the frame is too narrow to offset it
+      const knotScale = Math.min(0.75, maxR / KNOT_REACH);
+      const knotX = Math.max(0, Math.min(halfW * 0.62, MARGIN * halfW - knotScale * KNOT_REACH * sweepX));
       // monogram must fit inside the viewport with some air; when it has to
       // shrink, lift it into the upper half so it clears the contact block
       const endScale = Math.min(1, (halfW * 1.8) / MONOGRAM_WIDTH);
@@ -307,7 +348,7 @@ const ParticleField = () => {
           [0, startY], [0.06, startY], [0.16, 0], [0.74, 0], [0.9, endY], [1, endY],
         ] as [number, number][],
         SCALE: [
-          [0, narrow ? 0.65 : 0.8], [0.13, 0.75], [0.42, 0.75], [0.8, endScale], [1, endScale],
+          [0, cubeScale], [0.13, knotScale], [0.42, knotScale], [0.8, endScale], [1, endScale],
         ] as [number, number][],
       };
     };
@@ -339,8 +380,6 @@ const ParticleField = () => {
     };
 
     /* ——— Point cloud ——— */
-    const positions = new Float32Array(COUNT * 3);
-    positions.set(shapes[0]);
     const sizes = new Float32Array(COUNT);
     const tints = new Float32Array(COUNT);
     const phases = new Float32Array(COUNT);
@@ -351,18 +390,57 @@ const ParticleField = () => {
     }
 
     const geometry = new THREE.BufferGeometry();
-    const posAttr = new THREE.BufferAttribute(positions, 3);
-    posAttr.setUsage(THREE.DynamicDrawUsage);
-    geometry.setAttribute("position", posAttr);
+    // "position" holds anchor set A, aPosB holds anchor set B; the shader
+    // blends between them with uBlend. Each is re-uploaded only when the
+    // active pair changes (a handful of times across the whole page).
+    const posA = new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3);
+    const posB = new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3);
+    const offsets = new Float32Array(COUNT * 2);
+    const offAttr = new THREE.BufferAttribute(offsets, 2);
+    offAttr.setUsage(THREE.DynamicDrawUsage);
+    geometry.setAttribute("position", posA);
+    geometry.setAttribute("aPosB", posB);
+    geometry.setAttribute("aOffset", offAttr);
     geometry.setAttribute("aSize", new THREE.BufferAttribute(sizes, 1));
     geometry.setAttribute("aTint", new THREE.BufferAttribute(tints, 1));
+    geometry.setAttribute("aPhase", new THREE.BufferAttribute(phases, 1));
+
+    let boundA = -1;
+    let boundB = -1;
+    const bindShapes = (ia: number, ib: number) => {
+      if (boundA !== ia) {
+        (posA.array as Float32Array).set(shapes[ia]);
+        posA.needsUpdate = true;
+        boundA = ia;
+      }
+      if (boundB !== ib) {
+        (posB.array as Float32Array).set(shapes[ib]);
+        posB.needsUpdate = true;
+        boundB = ib;
+      }
+    };
+    bindShapes(0, 1);
+
+    // The monogram uses a webfont — resample once it has actually loaded
+    document.fonts
+      .load('700 260px "Dancing Script"')
+      .then(() => {
+        shapes[3] = monogramAnchors(COUNT);
+        REACHES[3] = reachOf(shapes[3]);
+        if (boundA === 3) boundA = -1;
+        if (boundB === 3) boundB = -1;
+      })
+      .catch(() => {});
 
     const material = new THREE.ShaderMaterial({
       vertexShader: VERT,
       fragmentShader: FRAG,
       uniforms: {
-        uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+        uPixelRatio: { value: dpr },
         uAlpha: { value: 1 },
+        uBlend: { value: 0 },
+        uTime: { value: 0 },
+        uBreathe: { value: reducedMotion ? 0 : 0.03 },
       },
       transparent: true,
       depthWrite: false,
@@ -370,6 +448,9 @@ const ParticleField = () => {
     });
 
     const points = new THREE.Points(geometry, material);
+    // the cloud is always centered near the camera axis; culling would only
+    // ever misfire against a stale bounding sphere from a previous shape
+    points.frustumCulled = false;
     scene.add(points);
 
     /* ——— Global scroll state via GSAP ——— */
@@ -384,7 +465,6 @@ const ParticleField = () => {
     });
 
     /* ——— Cursor push + spring (XY offsets, CPU-integrated) ——— */
-    const offsets = new Float32Array(COUNT * 2);
     const velocities = new Float32Array(COUNT * 2);
     const mouseNDC = new THREE.Vector2(-10, -10);
     const mouseWorld = new THREE.Vector3(-100, -100, 0);
@@ -404,16 +484,45 @@ const ParticleField = () => {
     const PUSH = 0.026;
     const SPRING = 0.06;
     const DAMPING = 0.86;
+    // an offset below ~0.001 world units is invisible — once every particle
+    // is quieter than that (and the cursor is away) the physics goes idle
+    const SETTLE_SQ = 1e-6;
+    let physicsActive = false;
 
-    /* ——— Frame loop: CPU position recompute every frame ——— */
+    /* ——— Frame loop ——— */
+    // scroll easing: 0.07/frame at 60fps ≡ a continuous rate of ~4.35/s.
+    // Applying it through exp(-k·dt) keeps the morph's designed trailing
+    // feel identical whether the machine renders at 30, 60 or 144fps —
+    // fast scrolling no longer leaves the particles further behind on
+    // slower frames.
+    const EASE_RATE = 4.35;
     const clock = new THREE.Clock();
+    let lastT = 0;
     let raf = 0;
+    let slowFrames = 0;
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const t = clock.getElapsedTime();
+      const rawDt = t - lastT;
+      lastT = t;
+      const dt = Math.min(rawDt, 0.05);
 
-      state.current += (state.target - state.current) * (reducedMotion ? 1 : 0.07);
+      // step resolution down under sustained load (never within the first
+      // couple of seconds — startup jank isn't a signal)
+      if (t > 2 && dpr > 1) {
+        slowFrames = rawDt > 0.023 ? slowFrames + 1 : Math.max(0, slowFrames - 2);
+        if (slowFrames > 45) {
+          dpr = Math.max(1, dpr - 0.25);
+          renderer.setPixelRatio(dpr);
+          material.uniforms.uPixelRatio.value = dpr;
+          slowFrames = 0;
+        }
+      }
+
+      state.current = reducedMotion
+        ? state.target
+        : state.current + (state.target - state.current) * (1 - Math.exp(-EASE_RATE * dt));
       const p = state.current;
 
       // slow continuous spin + scroll-linked turn, damped flat for the monogram
@@ -425,54 +534,75 @@ const ParticleField = () => {
       points.position.y = sampleTrack(tracks.Y, p);
       points.scale.setScalar(sampleTrack(tracks.SCALE, p));
       material.uniforms.uAlpha.value = sampleTrack(ALPHA_TRACK, p);
+      material.uniforms.uTime.value = t;
 
       const sf = sampleTrack(SHAPE_TRACK, p);
       const i0 = Math.min(Math.floor(sf), shapes.length - 2);
       let blend = sf - i0;
       blend = blend * blend * (3 - 2 * blend);
-      const A = shapes[i0];
-      const B = shapes[i0 + 1];
+      bindShapes(i0, i0 + 1);
+      material.uniforms.uBlend.value = blend;
 
       localMouse.copy(mouseWorld);
       points.worldToLocal(localMouse);
       const mx = localMouse.x;
       const my = localMouse.y;
 
-      const breathe = reducedMotion ? 0 : 0.03;
+      // wake the physics only when the cursor can actually reach a particle
+      const reachNow = Math.max(REACHES[i0], REACHES[i0 + 1]) + PUSH_RADIUS;
+      const mouseNear = mx * mx + my * my < reachNow * reachNow;
+      if (mouseNear) physicsActive = true;
 
-      for (let i = 0; i < COUNT; i++) {
-        const i3 = i * 3;
-        const i2 = i * 2;
+      if (physicsActive) {
+        const A = shapes[i0];
+        const B = shapes[i0 + 1];
+        // the push/spring constants are tuned per-60fps-frame; scale the
+        // integration so a dropped frame doesn't slow the spring down
+        const step = Math.min(rawDt * 60, 2.5);
+        const damp = Math.pow(DAMPING, step);
+        const springStep = SPRING * step;
+        const pushStep = PUSH * step;
+        let energy = 0;
 
-        let x = A[i3] + (B[i3] - A[i3]) * blend;
-        let y = A[i3 + 1] + (B[i3 + 1] - A[i3 + 1]) * blend;
-        const z = A[i3 + 2] + (B[i3 + 2] - A[i3 + 2]) * blend;
+        for (let i = 0; i < COUNT; i++) {
+          const i3 = i * 3;
+          const i2 = i * 2;
 
-        x += Math.sin(t * 0.8 + phases[i]) * breathe;
-        y += Math.cos(t * 0.7 + phases[i]) * breathe;
+          const x = A[i3] + (B[i3] - A[i3]) * blend;
+          const y = A[i3 + 1] + (B[i3 + 1] - A[i3 + 1]) * blend;
 
-        const dx = x - mx;
-        const dy = y - my;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < PUSH_RADIUS_SQ && d2 > 0.0001) {
-          const d = Math.sqrt(d2);
-          const force = (1 - d / PUSH_RADIUS) * PUSH;
-          velocities[i2] += (dx / d) * force;
-          velocities[i2 + 1] += (dy / d) * force;
+          const dx = x - mx;
+          const dy = y - my;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < PUSH_RADIUS_SQ && d2 > 0.0001) {
+            const d = Math.sqrt(d2);
+            const force = (1 - d / PUSH_RADIUS) * pushStep;
+            velocities[i2] += (dx / d) * force;
+            velocities[i2 + 1] += (dy / d) * force;
+          }
+
+          velocities[i2] -= offsets[i2] * springStep;
+          velocities[i2 + 1] -= offsets[i2 + 1] * springStep;
+          velocities[i2] *= damp;
+          velocities[i2 + 1] *= damp;
+          offsets[i2] += velocities[i2] * step;
+          offsets[i2 + 1] += velocities[i2 + 1] * step;
+
+          const e =
+            velocities[i2] * velocities[i2] +
+            velocities[i2 + 1] * velocities[i2 + 1] +
+            offsets[i2] * offsets[i2] +
+            offsets[i2 + 1] * offsets[i2 + 1];
+          if (e > energy) energy = e;
         }
 
-        velocities[i2] -= offsets[i2] * SPRING;
-        velocities[i2 + 1] -= offsets[i2 + 1] * SPRING;
-        velocities[i2] *= DAMPING;
-        velocities[i2 + 1] *= DAMPING;
-        offsets[i2] += velocities[i2];
-        offsets[i2 + 1] += velocities[i2 + 1];
-
-        positions[i3] = x + offsets[i2];
-        positions[i3 + 1] = y + offsets[i2 + 1];
-        positions[i3 + 2] = z;
+        if (!mouseNear && energy < SETTLE_SQ) {
+          offsets.fill(0);
+          velocities.fill(0);
+          physicsActive = false;
+        }
+        offAttr.needsUpdate = true;
       }
-      posAttr.needsUpdate = true;
 
       renderer.render(scene, camera);
     };
@@ -481,9 +611,10 @@ const ParticleField = () => {
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr()));
+      dpr = Math.min(dpr, Math.min(window.devicePixelRatio, maxDpr()));
+      renderer.setPixelRatio(dpr);
       renderer.setSize(window.innerWidth, window.innerHeight);
-      material.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, maxDpr());
+      material.uniforms.uPixelRatio.value = dpr;
       tracks = buildTracks();
     };
     window.addEventListener("resize", onResize);
@@ -500,7 +631,9 @@ const ParticleField = () => {
     };
   }, []);
 
-  return <div ref={mountRef} aria-hidden className="fixed inset-0 z-[1] pointer-events-none" />;
+  /* Slightly dimmed on phones, where the field sits directly behind text
+     instead of beside it */
+  return <div ref={mountRef} aria-hidden className="fixed inset-0 z-[1] pointer-events-none opacity-70 md:opacity-100" />;
 };
 
 export default ParticleField;

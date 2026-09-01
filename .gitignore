@@ -25,3 +25,6 @@ dist-ssr
 
 # Personal documents - never commit
 *.pdf
+
+# Claude Code local state (worktrees, synced skills, local settings)
+.claude/

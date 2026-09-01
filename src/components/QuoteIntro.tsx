@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 const QUOTES = [
@@ -54,6 +54,7 @@ interface QuoteIntroProps {
  */
 const QuoteIntro = ({ onReveal }: QuoteIntroProps) => {
   const reducedMotion = useReducedMotion();
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [quote] = useState(
     () => QUOTES[Math.floor(Math.random() * QUOTES.length)]
   );
@@ -72,6 +73,7 @@ const QuoteIntro = ({ onReveal }: QuoteIntroProps) => {
   useEffect(() => {
     document.documentElement.style.overflowY = "hidden";
     window.scrollTo(0, 0);
+    overlayRef.current?.focus();
     return () => {
       document.documentElement.style.overflowY = "";
     };
@@ -87,11 +89,20 @@ const QuoteIntro = ({ onReveal }: QuoteIntroProps) => {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[100] bg-black flex items-center justify-center px-6 cursor-pointer select-none touch-none overscroll-none"
+          ref={overlayRef}
+          className="fixed inset-0 z-[100] bg-black flex items-center justify-center px-6 cursor-pointer select-none touch-none overscroll-none focus:outline-none"
           onClick={dismiss}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+              e.preventDefault();
+              dismiss();
+            }
+          }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: "easeInOut" }}
-          aria-label="Click to skip intro"
+          role="button"
+          tabIndex={0}
+          aria-label="Skip intro"
         >
           <div className="max-w-3xl text-center">
             <motion.blockquote

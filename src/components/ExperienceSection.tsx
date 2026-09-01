@@ -98,7 +98,7 @@ const ExperienceSection = () => {
     >
       {/* Shifted left on wide screens so the particle knot on the right stays visible */}
       <div className="container mx-auto max-w-4xl lg:max-w-3xl lg:mx-0 lg:ml-[5vw]">
-        <SectionHeader index={1} label="Career" title="Experience" />
+        <SectionHeader title="Experience" />
 
         {/* Glowing timeline */}
         <div className="relative">
@@ -125,6 +125,8 @@ const ExperienceSection = () => {
                             <img
                               src={exp.logo}
                               alt={exp.logoAlt ?? `${exp.company} logo`}
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-contain"
                             />
                           </div>
@@ -141,7 +143,7 @@ const ExperienceSection = () => {
                       <div className="flex flex-col md:text-right gap-2">
                         <div className="flex items-center md:justify-end gap-2 text-muted-foreground">
                           <MapPin className="h-4 w-4" />
-                          <span className="text-sm">{exp.location}</span>
+                          <span className="text-sm font-mono">{exp.location}</span>
                         </div>
                         <div className="flex items-center md:justify-end gap-2 text-muted-foreground">
                           <Calendar className="h-4 w-4" />

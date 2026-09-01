@@ -5,6 +5,7 @@ import ProjectsSection from "@/components/ProjectsSection";
 import SkillsColumns from "@/components/SkillsColumns";
 import FooterContact from "@/components/FooterContact";
 import GlowBeams from "@/components/effects/GlowBeams";
+import EffectBoundary from "@/components/effects/EffectBoundary";
 import QuoteIntro from "@/components/QuoteIntro";
 import { lazy, Suspense, useState } from "react";
 import { motion, useScroll } from "framer-motion";
@@ -28,9 +29,11 @@ const Index = () => {
 
       {/* Fixed background: soft glows, then the CPU-morphing particle field */}
       <GlowBeams />
-      <Suspense fallback={null}>
-        <ParticleField />
-      </Suspense>
+      <EffectBoundary>
+        <Suspense fallback={null}>
+          <ParticleField />
+        </Suspense>
+      </EffectBoundary>
 
       {/* Reading progress: gold → crimson */}
       <motion.div
