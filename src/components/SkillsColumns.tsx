@@ -1,6 +1,13 @@
 import { motion } from "framer-motion";
+import SectionHeader from "@/components/SectionHeader";
 
-const COLUMNS: { label: string; crimson?: boolean; items: string[] }[] = [
+interface LedgerRow {
+  label: string;
+  crimson?: boolean;
+  items: string[];
+}
+
+const ROWS: LedgerRow[] = [
   {
     label: "Fabrication",
     items: ["PECVD", "PVD", "Photolithography", "Wet / Dry Etching", "Thin-film Deposition", "Cleanroom Protocols"],
@@ -19,55 +26,81 @@ const COLUMNS: { label: string; crimson?: boolean; items: string[] }[] = [
     crimson: true,
     items: ["COMSOL", "Fusion 360", "DepthAI", "Jupyter", "Ubuntu", "Figma"],
   },
+  {
+    label: "Coursework",
+    items: [
+      "Nanoprobing & Lithography",
+      "Semiconductor Physics",
+      "Material Science",
+      "Microfabrication & Thin-film",
+    ],
+  },
 ];
 
 /**
- * Skills as a plain typographic grid — mono kickers, no boxes.
+ * Skills as an instrument ledger: hairline-ruled spec-sheet rows — category
+ * label in the margin, capabilities flowing across. Hovering a row lights
+ * its rule like a brass instrument edge catching lamplight.
  */
 const SkillsColumns = () => {
   return (
     <section id="skills" className="py-28 relative">
-      <div className="container mx-auto px-6 max-w-5xl">
-        <div className="flex items-center gap-3 mb-14 font-mono text-sm">
-          <span className="text-accent">03</span>
-          <span className="w-8 metal-divider" />
-          <span className="text-muted-foreground uppercase tracking-[0.3em] text-xs">Toolkit</span>
-        </div>
+      {/* Solid backing so the particle field never shows through the ledger
+          text; fades at the section edges to avoid a hard horizontal band.
+          Plain background color, not backdrop blur — blur re-rasters on
+          every scrolled frame. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[linear-gradient(180deg,transparent,hsl(var(--background)/0.8)_12%,hsl(var(--background)/0.8)_88%,transparent)]"
+      />
+      <div className="container mx-auto px-6 max-w-5xl relative">
+        <SectionHeader title="Toolkit" />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12 border-t border-border/70 pt-12">
-          {COLUMNS.map((col, i) => (
+        <div>
+          {ROWS.map((row, rowIndex) => (
             <motion.div
-              key={col.label}
-              initial={{ opacity: 0, y: 20 }}
+              key={row.label}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{ duration: 0.6, delay: i * 0.08 }}
+              viewport={{ once: true, margin: "-8%" }}
+              transition={{ duration: 0.5, delay: rowIndex * 0.07, ease: [0.23, 1, 0.32, 1] }}
+              className="group relative"
             >
-              <h3
-                className={`font-mono text-xs uppercase tracking-[0.3em] mb-5 ${
-                  col.crimson ? "text-accent" : "text-primary"
-                }`}
-              >
-                {col.label}
-              </h3>
-              <ul className="space-y-2.5">
-                {col.items.map((item) => (
-                  <li
-                    key={item}
-                    className="text-sm md:text-base text-muted-foreground hover:text-foreground transition-colors duration-300"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              {/* Hairline rule: quiet by default, lights up gold on row hover */}
+              <div className="relative h-px">
+                <div className="absolute inset-0 bg-border/70" />
+                <div className="metal-divider absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </div>
+
+              <div className="grid md:grid-cols-[180px_1fr] gap-2 md:gap-8 py-7 md:py-8">
+                <h3
+                  className={`font-mono text-xs uppercase tracking-[0.3em] pt-1 ${
+                    row.crimson ? "text-accent" : "text-primary"
+                  }`}
+                >
+                  {row.label}
+                </h3>
+                <ul className="flex flex-wrap items-baseline gap-y-2.5">
+                  {row.items.map((item, i) => (
+                    <li key={item} className="flex items-baseline">
+                      <span className="text-base md:text-lg text-foreground/85 transition-colors duration-200 hover:text-primary-glow">
+                        {item}
+                      </span>
+                      {i < row.items.length - 1 && (
+                        <span aria-hidden className="mx-4 text-[hsl(var(--metal-mid))] opacity-60">
+                          ·
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
           ))}
-        </div>
 
-        <p className="mt-14 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground/60">
-          Coursework — Nanoprobing & Lithography · Semiconductor Physics · Material Science ·
-          Microfabrication & Thin-film
-        </p>
+          {/* closing rule so the ledger reads as a bounded sheet */}
+          <div className="h-px bg-border/70" />
+        </div>
       </div>
     </section>
   );

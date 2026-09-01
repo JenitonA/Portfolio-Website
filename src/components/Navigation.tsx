@@ -12,23 +12,37 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
-  // Scroll-spy: highlight the section currently in view
+  // Scroll-spy: highlight the section currently in view. Scroll events can
+  // fire faster than frames, so the (layout-reading) probe is coalesced to
+  // one rAF callback per frame, and the section nodes are resolved once.
   useEffect(() => {
-    const handleScroll = () => {
+    const sections = NAV_ITEMS.map((item) => ({
+      href: item.href,
+      el: document.querySelector<HTMLElement>(item.href),
+    }));
+
+    let raf = 0;
+    const probeSections = () => {
+      raf = 0;
       const probe = window.scrollY + window.innerHeight * 0.4;
       let current = "";
-      for (const item of NAV_ITEMS) {
-        const el = document.querySelector<HTMLElement>(item.href);
+      for (const { href, el } of sections) {
         if (el && el.offsetTop <= probe) {
-          current = item.href;
+          current = href;
         }
       }
       setActiveSection(current);
     };
+    const handleScroll = () => {
+      if (!raf) raf = requestAnimationFrame(probeSections);
+    };
 
-    handleScroll();
+    probeSections();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const scrollToSection = (href: string) => {
@@ -71,6 +85,7 @@ const Navigation = () => {
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden interactive p-2 rounded-full hover:bg-muted/50 transition-colors duration-300"
           aria-label="Toggle menu"
+          aria-expanded={isOpen}
         >
           {isOpen ? (
             <X className="h-5 w-5 text-foreground" />
@@ -82,7 +97,7 @@ const Navigation = () => {
 
       {/* Mobile dropdown */}
       {isOpen && (
-        <div className="md:hidden mt-2 glass-card rounded-2xl p-2 animate-fade-in">
+        <div className="md:hidden mt-2 glass-card rounded-2xl p-2 origin-top animate-menu-in">
           {NAV_ITEMS.map((item) => (
             <button
               key={item.name}

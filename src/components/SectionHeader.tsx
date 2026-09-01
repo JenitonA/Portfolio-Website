@@ -1,25 +1,19 @@
 interface SectionHeaderProps {
-  index: number;
-  label: string;
   title: string;
   description?: string;
 }
 
 /**
- * Numbered section header: mono kicker ("01 / PROJECTS"), display-font title
- * in solid ink, optional description, metallic divider.
+ * Section header: display-font title in solid ink over a short metallic
+ * divider, with an optional description.
  */
-const SectionHeader = ({ index, label, title, description }: SectionHeaderProps) => {
+const SectionHeader = ({ title, description }: SectionHeaderProps) => {
   return (
     <div className="text-center mb-16 animate-slide-up">
-      <div className="flex items-center justify-center gap-3 mb-4 font-mono text-sm">
-        <span className="text-accent">{String(index).padStart(2, "0")}</span>
-        <span className="w-8 metal-divider" />
-        <span className="text-muted-foreground uppercase tracking-[0.3em] text-xs">{label}</span>
-      </div>
-      <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 tracking-tight text-foreground">
+      <h2 className="font-display text-[clamp(2.25rem,5vw,3rem)] font-bold tracking-tight leading-[1.1] text-foreground">
         {title}
       </h2>
+      <div className="metal-divider w-16 mx-auto mt-5 mb-4" />
       {description && (
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{description}</p>
       )}

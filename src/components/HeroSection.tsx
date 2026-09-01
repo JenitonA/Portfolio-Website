@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { DiaTextReveal } from "@/components/magicui/dia-text-reveal";
 import { motion } from "framer-motion";
 import Aurora from "@/components/effects/Aurora";
+import EffectBoundary from "@/components/effects/EffectBoundary";
 import ProfilePic from "@/assets/ProfilePic.webp";
 
 interface HeroSectionProps {
@@ -22,12 +23,14 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
           WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 30%, transparent 85%)",
         }}
       >
-        <Aurora
-          colorStops={["#E8A33D", "#A51C30", "#F2C14E"]}
-          blend={0.5}
-          amplitude={0.9}
-          speed={0.7}
-        />
+        <EffectBoundary>
+          <Aurora
+            colorStops={["#E8A33D", "#A51C30", "#F2C14E"]}
+            blend={0.5}
+            amplitude={0.9}
+            speed={0.7}
+          />
+        </EffectBoundary>
       </div>
 
       <div className="container mx-auto px-6 relative z-10 py-28">
@@ -49,15 +52,14 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
             </div>
 
             {/* Education badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full metal-border bg-primary/5 backdrop-blur-sm mb-6">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <div className="inline-flex items-center px-4 py-1.5 rounded-full metal-border bg-primary/5 backdrop-blur-sm mb-6">
               <span className="text-sm text-primary font-medium">
                 University of Waterloo • BASc Nanotechnology Engineering
               </span>
             </div>
 
             {/* Name */}
-            <h1 className="font-display text-5xl md:text-7xl font-bold mb-8 leading-[1.02] tracking-tight">
+            <h1 className="font-display text-[clamp(3rem,8vw,4.5rem)] font-bold mb-8 leading-[1.02] tracking-tight">
               <DiaTextReveal text="Jeniton" color="#f4efe6" />
               <br />
               <DiaTextReveal text="Augustinpillai" color="#f4efe6" delay={0.3} />
@@ -67,8 +69,8 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
               Nanotechnology engineering student passionate about{" "}
               <em className="font-elegant italic text-[1.1em] text-primary-glow">
                 nanofabrication
-              </em>{" "}
-              — from cleanroom microfabrication to nanoscale devices and the machines that
+              </em>
+              . From cleanroom microfabrication to nanoscale devices and the machines that
               build them.
             </p>
           </motion.div>
@@ -76,11 +78,15 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
       </div>
 
       {/* Scroll cue */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-        <span className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
-          Scroll
-        </span>
-        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        {/* float sets transform, so it lives on an inner wrapper to keep the
+            -translate-x-1/2 centering intact */}
+        <div className="flex flex-col items-center gap-2 animate-float">
+          <span className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Scroll
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </div>
       </div>
     </section>
   );
