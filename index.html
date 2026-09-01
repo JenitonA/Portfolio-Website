@@ -13,9 +13,21 @@
          Grotesk 500-700 (display), Playfair italic 400 (accent), Dancing Script 700 (monogram) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&family=Playfair+Display:ital,wght@1,400&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/WebsiteLogo.png" />
+    <!-- Favicon (512x512 — also what Google Search shows beside the URL) -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/WebsiteLogo.png" />
     <link rel="shortcut icon" type="image/png" href="/WebsiteLogo.png" />
+    <link rel="apple-touch-icon" href="/WebsiteLogo.png" />
+
+    <!-- Site name for Google Search (otherwise it guesses "Vercel" from the domain) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Jeniton Augustinpillai",
+      "alternateName": "Jeniton Augustinpillai Portfolio",
+      "url": "https://jeniton.vercel.app/"
+    }
+    </script>
 
     <!-- Open Graph — read by Facebook, LinkedIn, Discord, Slack, WhatsApp, iMessage.
          One tag set only: duplicate og: tags make scrapers pick values at random.
