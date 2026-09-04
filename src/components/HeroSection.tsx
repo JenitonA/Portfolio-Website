@@ -43,7 +43,7 @@ const HeroSection = ({ introDone = true }: HeroSectionProps) => {
           >
             {/* Headshot with glow ring */}
             <div className="relative mb-10">
-              <div className="absolute -inset-1.5 rounded-full bg-gradient-primary opacity-40 blur-md animate-pulse-glow" />
+              <div className="absolute -inset-1.5 rounded-full bg-gradient-primary blur-md glow-primary animate-pulse-glow" />
               <img
                 src={ProfilePic}
                 alt="Jeniton Augustinpillai"

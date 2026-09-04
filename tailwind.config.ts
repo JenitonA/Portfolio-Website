@@ -96,9 +96,12 @@ export default {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-20px)" },
         },
+        // opacity only: animating box-shadow forces a main-thread repaint of
+        // the page layer on every frame for as long as the element exists,
+        // even when it has scrolled offscreen
         "pulse-glow": {
-          "0%": { boxShadow: "var(--glow-primary)" },
-          "100%": { boxShadow: "var(--glow-strong)" },
+          "0%": { opacity: "0.3" },
+          "100%": { opacity: "0.6" },
         },
         "slide-up": {
           "0%": { transform: "translateY(20px)", opacity: "0" },

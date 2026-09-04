@@ -21,6 +21,12 @@ gsap.registerPlugin(ScrollTrigger);
  *   return. That physics is stateful, so it stays on the CPU — but it
  *   only runs (and only re-uploads its buffer) while the cursor is near
  *   the shape or residual motion remains. Idle frames skip it entirely.
+ * - Rendering is "starfield" style: every particle carries a brightness
+ *   tier, a palette colour and a size; the fragment shader draws a hot
+ *   powered disc (with ray cross on the bright tier), brightness > 1
+ *   blows out toward white, and premultiplied additive blending lets
+ *   overlaps saturate. A GPU lens magnifies and brightens stars near the
+ *   pointer on top of the CPU push.
  */
 
 /* Adaptive particle budget: phones get a lighter cloud, low-core devices
@@ -206,45 +212,133 @@ function monogramAnchors(count: number): Float32Array {
   return anchors;
 }
 
+/* ——— Star palette ———
+   Warm-only, per the Heritage system (the palette never cools): ivory
+   white for the hot cores, the two lamplight golds, crimson flare as
+   punctuation, and a brass highlight. Weights are cumulative. */
+const PALETTE: [number, number, number][] = [
+  [0.969, 0.933, 0.863], // ivory white
+  [1.0, 0.831, 0.361],   // lamplight flare
+  [0.957, 0.753, 0.137], // lamplight gold
+  [0.969, 0.388, 0.467], // crimson flare
+  [0.918, 0.886, 0.824], // brass highlight
+];
+const PALETTE_CDF = [0.22, 0.47, 0.7, 0.88, 1.0];
+
 const VERT = /* glsl */ `
   attribute vec3 aPosB;
   attribute vec2 aOffset;
-  attribute float aSize;
-  attribute float aTint;
+  attribute float aScale;
+  attribute float aBright;
+  attribute vec3 aColor;
   attribute float aPhase;
-  varying float vTint;
-  varying float vFade;
+  attribute float aRate;
+  varying vec3 vColor;
+  varying float vBrightness;
+  varying float vDiameter;
+  varying float vRays;
+  varying float vOpacity;
   uniform float uPixelRatio;
   uniform float uBlend;
   uniform float uTime;
   uniform float uBreathe;
+  uniform float uTwinkle;
+  uniform float uAlpha;
+  uniform float uAspect;
+  uniform float uLensActive;
+  uniform vec2 uLensPointer;
+  uniform float uLensRadius;
 
   void main() {
-    vTint = aTint;
     vec3 p = mix(position, aPosB, uBlend);
     p.x += sin(uTime * 0.8 + aPhase) * uBreathe + aOffset.x;
     p.y += cos(uTime * 0.7 + aPhase) * uBreathe + aOffset.y;
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
-    gl_Position = projectionMatrix * mv;
-    gl_PointSize = aSize * uPixelRatio * (34.0 / -mv.z);
-    vFade = smoothstep(14.0, 4.0, -mv.z);
+    vec4 clip = projectionMatrix * mv;
+
+    // 1.0 at the camera's rest distance; nearer stars grow, farther shrink.
+    // Capped so the dispersed cloud's near-camera stars don't become
+    // screen-filling blobs (fill-rate, and they look like smudges)
+    float depthScale = min(7.0 / max(-mv.z, 0.5), 1.8);
+    float depthFade = 0.45 + 0.55 * smoothstep(14.0, 4.0, -mv.z);
+
+    // slow per-star twinkle — never below 86% so nothing blinks
+    float twinkle = 1.0 - uTwinkle * 0.14 * (0.5 + 0.5 * sin(aPhase * 7.0 + uTime * aRate));
+    float bright = aBright * twinkle;
+
+    // base diameter in device pixels: dust at ~1px, typical stars 3–4px,
+    // the bright tier gets a wider disc so its halo reads as a halo
+    float size = uPixelRatio * (0.5 + aScale * 4.2) * depthScale
+      * (1.0 + smoothstep(1.2, 3.5, aBright) * 1.6);
+
+    // cursor lens: stars near the pointer magnify, brighten and lift
+    // toward the camera — evaluated here, so it costs the CPU nothing
+    float lens = 0.0;
+    if (uLensActive > 0.0) {
+      vec2 ndc = clip.xy / max(clip.w, 0.0001);
+      float d = length((ndc - uLensPointer) * vec2(uAspect, 1.0));
+      lens = (1.0 - smoothstep(0.0, uLensRadius, d)) * uLensActive;
+      mv.z += lens * 0.9;
+      clip = projectionMatrix * mv;
+    }
+    bright *= 1.0 + lens * 0.9;
+    size *= 1.0 + lens * 0.55;
+
+    vDiameter = size;
+    gl_PointSize = max(size, 4.0);
+    gl_Position = clip;
+
+    vColor = aColor;
+    vBrightness = bright * depthFade;
+    // the scroll fade scales coverage, not brightness: colour adds as
+    // emission × alpha, so the fade stays linear and a fully faded field
+    // writes nothing to the canvas (no stray opaque alpha, no fill cost)
+    vOpacity = uAlpha;
+    vRays = smoothstep(1.4, 2.6, aBright);
   }
 `;
 
 const FRAG = /* glsl */ `
-  varying float vTint;
-  varying float vFade;
-  uniform float uAlpha;
+  varying vec3 vColor;
+  varying float vBrightness;
+  varying float vDiameter;
+  varying float vRays;
+  varying float vOpacity;
+
+  // cubic B-spline footprint — lets a sub-4px star render as a stable,
+  // correctly-dim speck instead of an aliased flicker
+  float cubicCoverage(float c) {
+    float x = abs(c);
+    if (x < 1.0) return (4.0 - 6.0 * x * x + 3.0 * x * x * x) / 6.0;
+    float t = max(2.0 - x, 0.0);
+    return t * t * t / 6.0;
+  }
 
   void main() {
-    float d = length(gl_PointCoord - 0.5);
-    float alpha = smoothstep(0.5, 0.08, d);
+    vec2 pixel = (gl_PointCoord - 0.5) * max(vDiameter, 4.0);
+    vec2 pt = pixel * 2.0 / max(vDiameter, 0.0001);
+    float r = length(pt);
 
-    vec3 gold = vec3(0.949, 0.760, 0.306);
-    vec3 crimson = vec3(0.792, 0.216, 0.278);
-    vec3 color = mix(gold, crimson, vTint);
+    // soft disc with a hot centre, plus a faint four-point ray cross on
+    // the bright tier only
+    float disc = 1.0 - smoothstep(0.08, 1.0, r);
+    float core = pow(disc, 2.2);
+    float hRay = exp(-abs(pt.y) * 28.0) * (1.0 - smoothstep(0.18, 1.0, abs(pt.x)));
+    float vRay = exp(-abs(pt.x) * 28.0) * (1.0 - smoothstep(0.18, 1.0, abs(pt.y)));
+    float rays = max(hRay, vRay) * 0.28 * vRays;
 
-    gl_FragColor = vec4(color, alpha * 0.42 * uAlpha * (0.4 + 0.6 * vFade));
+    float resolved = smoothstep(2.0, 4.0, vDiameter);
+    float filtered = cubicCoverage(pixel.x) * cubicCoverage(pixel.y) * 0.1509 * vDiameter * vDiameter;
+    float alpha = mix(filtered, max(core, rays), resolved) * vOpacity;
+    if (alpha <= 0.002) discard;
+
+    // brightness above ~1 pushes the colour toward white-hot; saturated
+    // colours get a small energy boost so they don't read as muddy
+    float whiteCore = smoothstep(0.9, 2.8, vBrightness) * 0.82;
+    float colorEnergy = 1.0 - min(vColor.r, min(vColor.g, vColor.b));
+    vec3 emission = mix(vColor, vec3(1.0, 0.98, 0.94), whiteCore) * vBrightness * (1.0 + colorEnergy * 0.42);
+
+    gl_FragColor = vec4(emission, alpha);
   }
 `;
 
@@ -257,8 +351,9 @@ const ParticleField = () => {
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const COUNT = particleBudget();
-    // phones don't benefit from >1.5x DPR on additive point sprites
-    const maxDpr = () => (window.innerWidth < 768 ? 1.5 : 2);
+    // soft additive sprites look identical at 1.5x and 2x, and 2x costs
+    // 78% more fill on the GPU that also has to composite the page
+    const maxDpr = () => 1.5;
 
     /* three r185 requires WebGL2 and throws when no context can be created
        (Safari Lockdown Mode, old Safari, GPU off) — skip the field, keep the site */
@@ -379,14 +474,33 @@ const ParticleField = () => {
       return track[track.length - 1][1];
     };
 
-    /* ——— Point cloud ——— */
-    const sizes = new Float32Array(COUNT);
-    const tints = new Float32Array(COUNT);
+    /* ——— Point cloud ———
+       Two brightness tiers: most stars sit at 0.56–1.34 (they stay their
+       own colour), ~9% at 2.0–3.5 (they blow out to white-hot cores with
+       halos and rays). Each star takes a weighted palette colour, nudged
+       toward a second one so no two neighbours are quite the same. */
+    const scales = new Float32Array(COUNT);
+    const brights = new Float32Array(COUNT);
+    const colors = new Float32Array(COUNT * 3);
     const phases = new Float32Array(COUNT);
+    const rates = new Float32Array(COUNT);
+    const pickColor = () => {
+      const r = Math.random();
+      let k = 0;
+      while (k < PALETTE_CDF.length - 1 && r > PALETTE_CDF[k]) k++;
+      return PALETTE[k];
+    };
     for (let i = 0; i < COUNT; i++) {
-      sizes[i] = 0.6 + Math.random() * 1.6;
-      tints[i] = Math.random() < 0.2 ? 0.75 + Math.random() * 0.25 : Math.random() * 0.18;
+      scales[i] = 0.82 + Math.random() * 0.16;
+      brights[i] = Math.random() < 0.07 ? 2 + Math.random() * 1.5 : 0.56 + Math.random() * 0.78;
+      const a = pickColor();
+      const b = pickColor();
+      const mixAmt = Math.random() * 0.35;
+      colors[i * 3] = a[0] + (b[0] - a[0]) * mixAmt;
+      colors[i * 3 + 1] = a[1] + (b[1] - a[1]) * mixAmt;
+      colors[i * 3 + 2] = a[2] + (b[2] - a[2]) * mixAmt;
       phases[i] = Math.random() * Math.PI * 2;
+      rates[i] = 0.65 + Math.random() * 0.7;
     }
 
     const geometry = new THREE.BufferGeometry();
@@ -401,9 +515,11 @@ const ParticleField = () => {
     geometry.setAttribute("position", posA);
     geometry.setAttribute("aPosB", posB);
     geometry.setAttribute("aOffset", offAttr);
-    geometry.setAttribute("aSize", new THREE.BufferAttribute(sizes, 1));
-    geometry.setAttribute("aTint", new THREE.BufferAttribute(tints, 1));
+    geometry.setAttribute("aScale", new THREE.BufferAttribute(scales, 1));
+    geometry.setAttribute("aBright", new THREE.BufferAttribute(brights, 1));
+    geometry.setAttribute("aColor", new THREE.BufferAttribute(colors, 3));
     geometry.setAttribute("aPhase", new THREE.BufferAttribute(phases, 1));
+    geometry.setAttribute("aRate", new THREE.BufferAttribute(rates, 1));
 
     let boundA = -1;
     let boundB = -1;
@@ -441,10 +557,26 @@ const ParticleField = () => {
         uBlend: { value: 0 },
         uTime: { value: 0 },
         uBreathe: { value: reducedMotion ? 0 : 0.03 },
+        uTwinkle: { value: reducedMotion ? 0 : 1 },
+        uAspect: { value: camera.aspect },
+        uLensActive: { value: 0 },
+        uLensPointer: { value: new THREE.Vector2() },
+        uLensRadius: { value: 0.24 },
       },
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      toneMapped: false,
+      // premultiplied additive: colour adds (so overlapping stars saturate
+      // to white), alpha composites normally so the canvas stays correct
+      // over the page background
+      blending: THREE.CustomBlending,
+      blendEquation: THREE.AddEquation,
+      blendSrc: THREE.SrcAlphaFactor,
+      blendDst: THREE.OneFactor,
+      blendEquationAlpha: THREE.AddEquation,
+      blendSrcAlpha: THREE.OneFactor,
+      blendDstAlpha: THREE.OneMinusSrcAlphaFactor,
     });
 
     const points = new THREE.Points(geometry, material);
@@ -472,12 +604,24 @@ const ParticleField = () => {
     const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
     const localMouse = new THREE.Vector3();
 
+    // the GPU lens follows the pointer in NDC and eases in/out so it never
+    // pops when the cursor enters or leaves the window
+    let lensTarget = 0;
+    const lensPointer = material.uniforms.uLensPointer.value as THREE.Vector2;
     const onPointerMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return; // a finger has no hover
       mouseNDC.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
       raycaster.setFromCamera(mouseNDC, camera);
       raycaster.ray.intersectPlane(plane, mouseWorld);
+      lensPointer.copy(mouseNDC);
+      lensTarget = 1;
+    };
+    const onPointerLeave = () => {
+      lensTarget = 0;
+      mouseWorld.set(-100, -100, 0);
     };
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.documentElement.addEventListener("pointerleave", onPointerLeave);
 
     const PUSH_RADIUS = 0.9;
     const PUSH_RADIUS_SQ = PUSH_RADIUS * PUSH_RADIUS;
@@ -533,8 +677,28 @@ const ParticleField = () => {
       points.position.x = sampleTrack(tracks.X, p);
       points.position.y = sampleTrack(tracks.Y, p);
       points.scale.setScalar(sampleTrack(tracks.SCALE, p));
-      material.uniforms.uAlpha.value = sampleTrack(ALPHA_TRACK, p);
+      const alpha = sampleTrack(ALPHA_TRACK, p);
+      material.uniforms.uAlpha.value = alpha;
       material.uniforms.uTime.value = t;
+
+      // fully faded (the projects section): nothing to see, so draw nothing
+      // and let the GPU spend the frame on the page instead. Physics state is
+      // dropped too — by the time the field returns it has long settled.
+      if (alpha <= 0) {
+        if (points.visible) {
+          points.visible = false;
+          offsets.fill(0);
+          velocities.fill(0);
+          offAttr.needsUpdate = true;
+          physicsActive = false;
+          renderer.clear();
+        }
+        return;
+      }
+      points.visible = true;
+      const lensU = material.uniforms.uLensActive;
+      lensU.value += (lensTarget - lensU.value) * (1 - Math.exp(-6 * dt));
+      if (lensU.value < 0.002) lensU.value = 0;
 
       const sf = sampleTrack(SHAPE_TRACK, p);
       const i0 = Math.min(Math.floor(sf), shapes.length - 2);
@@ -615,6 +779,7 @@ const ParticleField = () => {
       renderer.setPixelRatio(dpr);
       renderer.setSize(window.innerWidth, window.innerHeight);
       material.uniforms.uPixelRatio.value = dpr;
+      material.uniforms.uAspect.value = camera.aspect;
       tracks = buildTracks();
     };
     window.addEventListener("resize", onResize);
@@ -623,6 +788,7 @@ const ParticleField = () => {
       cancelAnimationFrame(raf);
       trigger.kill();
       window.removeEventListener("pointermove", onPointerMove);
+      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
       window.removeEventListener("resize", onResize);
       geometry.dispose();
       material.dispose();
@@ -633,7 +799,7 @@ const ParticleField = () => {
 
   /* Slightly dimmed on phones, where the field sits directly behind text
      instead of beside it */
-  return <div ref={mountRef} aria-hidden className="fixed inset-0 z-[1] pointer-events-none opacity-70 md:opacity-100" />;
+  return <div ref={mountRef} aria-hidden className="fixed inset-0 z-[1] pointer-events-none opacity-60 md:opacity-100" />;
 };
 
 export default ParticleField;

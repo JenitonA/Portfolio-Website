@@ -145,10 +145,10 @@ const ProjectsSection = () => {
   return (
     <section 
       ref={sectionRef}
-      id="projects" 
-      className={`py-20 px-6 relative transition-all duration-1000 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      }`}
+      id="projects"
+      /* Cards reveal individually (staggered below); animating the whole
+         2300px section forced a full-section layer rasterization on entry */
+      className="py-20 px-6 relative"
     >
       {/* Soft radial backdrop so cards float on light, not flat dark */}
       <div
@@ -164,10 +164,12 @@ const ProjectsSection = () => {
           {projects.filter(p => p.featured).map((project, index) => (
             <SpotlightCard
               key={index}
+              /* reveal is fade-only: translating a card this size mid-scroll
+                 forces a full-card layer rasterization (see ExperienceSection) */
               className={`group hover:shadow-glow-accent transition-all duration-700 hover:scale-[1.015] ${
                 index % 4 === 0 || index % 4 === 3 ? 'lg:col-span-4' : 'lg:col-span-2'
               } ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                isVisible ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ 
                 animationDelay: `${index * 0.2}s`,
@@ -314,7 +316,7 @@ const ProjectsSection = () => {
             <SpotlightCard
               key={index}
               className={`group hover:shadow-glow-primary transition-all duration-500 hover:scale-[1.03] hover:-translate-y-1 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                isVisible ? 'opacity-100' : 'opacity-0'
               }`}
               style={{
                 transitionDelay: isVisible ? `${(index + 4) * 0.1}s` : '0s'
