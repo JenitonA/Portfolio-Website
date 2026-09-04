@@ -92,9 +92,10 @@ const ExperienceSection = () => {
     <section
       ref={sectionRef}
       id="experience"
-      className={`py-20 px-6 transition-all duration-1000 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      }`}
+      /* The reveal lives on the individual cards (staggered below), not on
+         the section: fading/translating a 2000px-tall section promotes it to
+         its own compositing layer and rasterizes the whole thing mid-scroll */
+      className="py-20 px-6"
     >
       {/* Shifted left on wide screens so the particle knot on the right stays visible */}
       <div className="container mx-auto max-w-4xl lg:max-w-3xl lg:mx-0 lg:ml-[5vw]">
@@ -108,8 +109,11 @@ const ExperienceSection = () => {
             {experiences.map((exp, index) => (
               <div
                 key={index}
-                className={`relative pl-10 md:pl-14 transition-all duration-700 ${
-                  isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+                /* fade only — a translate on a card this size promotes it to a
+                   compositing layer and rasterizes it mid-scroll (measured 3x
+                   the stall of a plain opacity reveal) */
+                className={`relative pl-10 md:pl-14 transition-opacity duration-700 ${
+                  isVisible ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{ transitionDelay: isVisible ? `${index * 0.15}s` : '0s' }}
               >
